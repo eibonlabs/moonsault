@@ -1,0 +1,23 @@
+{
+  "name": "moonsault",
+  "version": "1.0.0",
+  "description": "A super lightweight framework for building applications with native web components.",
+  "main": "index.html",
+  "scripts": {
+    "docs": "./node_modules/.bin/jsdoc src/**/*.* --destination docs/docs",
+    "build": "node build/build.js",
+    "server": "node server/server.js",
+    "start": "npm run docs  & npm run server & npm run build"
+  },
+  "author": "Eibon.labs",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "esbuild": "^0.18.17",
+    "express": "^4.18.2",
+    "fs-extra": "^10.0.1",
+    "jsdoc": "^4.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
+  }
+}
