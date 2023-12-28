@@ -1,0 +1,19 @@
+const componentName = 'p-about';
+
+import { buildComponent } from '../../../../lib/moonsault.js';
+import html from './html.js';
+import css from './css.js';
+
+// web component
+class About extends HTMLElement {
+    // connect component
+    connectedCallback() {
+        buildComponent(componentName, html, css, this);
+        console.info('About Page Connected');
+    }
+}
+
+// register component
+customElements.define(componentName, About);
+
+export default About;
