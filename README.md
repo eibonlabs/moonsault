@@ -29,7 +29,7 @@ Node.js allows you to run JavaScript code outside of the browser.
 You can download node.js [here](https://nodejs.org).
 
 After installing node.js, you'll need to download moonsault to your computer.  
-The download link is [here](https://codeload.github.com/eibonlabs/moonsault-web/zip/refs/heads/main?token=ARVOHINX3X7FE6BJLCBLZPTFPSEE4).
+The download link is [here](https://codeload.github.com/eibonlabs/moonsault/zip/refs/heads/main).
 
 Unzip the moonsault-main.zip file to a location on your computer.
 
