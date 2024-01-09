@@ -9,7 +9,7 @@ class _TEMPLATE_ extends HTMLElement {
     // connect component
     connectedCallback() {
         buildComponent(componentName, html, css, this);
-        console.info('_TEMPLATE_ Page Connected');
+        console.info('_TEMPLATE_ Component Connected');
     }
 }
 

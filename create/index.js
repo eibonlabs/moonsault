@@ -69,7 +69,6 @@
                     console.log(`Don't forget to add the page to your application's routes.js file!`);
                     console.log('');
                     console.log('Press enter to continue.');
-
                     process.stdin.once('data', () => {
                         displayMainMenu();
                     });
@@ -110,7 +109,7 @@
                             } else {
                                 data = data.toString();
                                 // replace component name
-                                data = data.replaceAll('c-_TEMPLATE_', `p-${name.toLowerCase()}`);
+                                data = data.replaceAll('c-_TEMPLATE_', `c-${name.toLowerCase()}`);
                                 data = data.replaceAll('_TEMPLATE_', capitalizeFirstLetter(name));
                                 fsExtra.mkdir(dest, function (err) {
                                     fsExtra.writeFile(`${dest}${asset}`, data, function (err) {
@@ -129,8 +128,6 @@
                     console.log(`Component ${name} created!`);
                     console.log('');
                     console.log('Press enter to continue.');
-
-
                     process.stdin.once('data', () => {
                         displayMainMenu();
                     });
@@ -224,19 +221,19 @@
                             });
 
                             console.log('');
-                            if (apps.length === 1) {
-                                console.log(`${name} application created!`);
-                                defaultApp(name);
-                            } else {
-                                console.log(`${name} application created!`);
-                                console.log('');
-                                console.log('Remember to set this as the default app to load, if you want!');
-                                console.log('');
-                                console.log('Press enter to continue.');
-                                process.stdin.once('data', () => {
+                            console.log(`${name} application created!`);
+                            console.log('');
+                            console.log(`Would you like to set ${name} as the default application? [y/n]`);
+                            process.stdin.once('data', (selection) => {
+                                selection = selection.toString().trim();
+
+                                if (selection.toLowerCase() === 'y' || selection.toLowerCase() === 'yes') {
+                                    defaultApp(name);
+                                } else {
                                     displayMainMenu();
-                                });
-                            }
+                                }
+
+                            });
                         }
                     });
                 } else {

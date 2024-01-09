@@ -7,12 +7,17 @@ import css from './css.js';
 // web component
 class HelloWorld extends HTMLElement {
     helloWorld() {
+        alert('Hello World!');
         console.log('You called the public API!');
     }
+
 
     // connect component
     connectedCallback() {
         buildComponent(componentName, html, css, this);
+        this.querySelector('#helloWorldButton').addEventListener('click', (e) => {
+            this.helloWorld();
+        })
     }
 }
 
