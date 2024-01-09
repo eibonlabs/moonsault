@@ -45,7 +45,7 @@ You'll be presented with a list of options. Choose `1. Create an application.` b
 
 Next, you'll be asked to name your application. For this example, we'll call the application TestApp. Type in `TestApp`, and press Enter.
 
-You should see that the application was created, and also set as the default application.
+You should see that the application was created. You will then be asked if you want the app to be the default. Type `y` and then press Enter.
 
 Press Enter again, to go back to the main menu.
 
@@ -66,7 +66,7 @@ You should see that the application is up and running!
 
 The moonsault framework allows developers to host multiple applications under one framework. These applications are stored in the src/apps directory.
 
-The default application (defined in the body tag of `src/index.html`) will get loaded when navigationg to [http://localhost:8080](http://localhost:8080), but you can also go directly to an application through the url using the following pattern `http://localhost:8080/apps/APP_NAME`.
+The default application (defined in the body tag of `src/index.html`) will get loaded when navigating to [http://localhost:8080](http://localhost:8080), but you can also go directly to an application through the url using the following pattern `http://localhost:8080/apps/APP_NAME`.
 
 Within each application is a common set of directories and initial files:
 
@@ -160,7 +160,7 @@ The entry point of the application is `app.js`. This module does a few things:
 2. Imports the applications's `localization.js` module.
 3. Imports the applications `routes.js` module.
 4. Imports components that are used outside of the `#page` element.
-5. Passes in a template that is used as theo overall layout of the application, and is appended to the `body` of the document. This template must include a `#page` element in order for routing to work correctly.
+5. Passes in a template that is used as the overall layout of the application, and is appended to the `body` of the document. This template must include a `#page` element in order for routing to work correctly.
 
 [⬆ Back to TOC](#table-of-contents)
 
@@ -257,7 +257,7 @@ Other dependecies that are included in this repo are:
 - [swagger-jsdoc](https://github.com/Surnet/swagger-jsdoc)
 - [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express)
 
-JSDoc and swagger are used for code documentation, and not a real dependency in the framework.
+JSDoc and swagger are used for code documentation, and are not real dependencies in the framework.
 
 Express is used for setting up a local server for hosting the framework, and also provides and easy way for mocking up endpoints for your applications.
 

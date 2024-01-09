@@ -1,5 +1,5 @@
 const css = `
-  p-_TEMPLATE_ {
+  c-markdown {
   }
 `;
 
