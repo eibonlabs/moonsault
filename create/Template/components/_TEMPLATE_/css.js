@@ -1,5 +1,5 @@
 const css = `
-  _TEMPLATE_ {
+  c-_TEMPLATE_ {
   }
 `;
 

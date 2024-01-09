@@ -1,6 +1,7 @@
 const html = `
 <div>
-    Hello World!
+    This is Hello World component!
+    <button id="helloWorldButton">Click me!</button>
 </div>
 `;
 

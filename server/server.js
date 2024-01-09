@@ -1,7 +1,6 @@
 /*global require __dirname */
 const path = require('path');
 const express = require('express');
-const process = require('process');
 
 const swagger = require('./swagger');
 const services = require('./services');
@@ -40,5 +39,3 @@ app.use(express.static(serveDocsFrom, { fallthrough: true }));
 app.get('/', (req, res, next) => {
   next();
 });
-
-process.on('SIGINT', () => process.exit(0));
