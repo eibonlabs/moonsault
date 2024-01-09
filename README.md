@@ -1,4 +1,4 @@
-# MOONSAULT - v.1.0.0
+# MOONSAULT
 
 A super lightweight framework for building applications with native web components and ES6 modules. Moonsault has a few goals:
 

@@ -8,7 +8,7 @@ const websockets = require('./websockets');
 
 const port = 8080;
 
-const source = 'src';
+const source = 'public';
 
 const serveAppFrom = path.resolve() + '/' + source;
 const serveDocsFrom = path.resolve() + '/docs/';
