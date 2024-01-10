@@ -2,7 +2,7 @@
 
 ## v.1.1.1
 
-- fixed sonarqube issues with moonsault create commmand line app
+- fixed sonarqube issues with moonsault create command line app
 
 ## v.1.1.0
 
