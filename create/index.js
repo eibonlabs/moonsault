@@ -26,6 +26,36 @@
         }
     }
 
+    const processPageFiles = (src, dest, name) => {
+        const assets = [
+            'index.js',
+            'html.js',
+            'css.js'
+        ];
+
+        for (let asset of assets) {
+            fsExtra.readFile(`${src}${asset}`, function (err, data) {
+                if (err) {
+                    throw err
+                } else {
+                    data = data.toString();
+                    // replace component name
+                    data = data.replaceAll('p-_TEMPLATE_', `p-${name.toLowerCase()}`);
+                    data = data.replaceAll('_TEMPLATE_', capitalizeFirstLetter(name));
+                    fsExtra.mkdir(dest, function (err) {
+                        fsExtra.writeFile(`${dest}${asset}`, data, function (err) {
+                            if (err) {
+                                console.log('An error occurred when writing');
+                                console.log(err);
+                                quit();
+                            }
+                        });
+                    });
+                }
+            });
+        }
+    }
+
     const createPage = (appName) => {
         displayLogo();
         console.log(`Please enter the name of the page you would like to create in the ${appName} application, or press ENTER to cancel: `);
@@ -35,33 +65,8 @@
             const dest = `${path.resolve()}${appsDirectory}${appName}/pages/${capitalizeFirstLetter(name)}/`;
             if (name !== '') {
                 if (!fs.existsSync(dest)) {
-                    const assets = [
-                        'index.js',
-                        'html.js',
-                        'css.js'
-                    ];
 
-                    for (let asset of assets) {
-                        fsExtra.readFile(`${src}${asset}`, function (err, data) {
-                            if (err) {
-                                throw err
-                            } else {
-                                data = data.toString();
-                                // replace component name
-                                data = data.replaceAll('p-_TEMPLATE_', `p-${name.toLowerCase()}`);
-                                data = data.replaceAll('_TEMPLATE_', capitalizeFirstLetter(name));
-                                fsExtra.mkdir(dest, function (err) {
-                                    fsExtra.writeFile(`${dest}${asset}`, data, function (err) {
-                                        if (err) {
-                                            console.log('An error occurred when writing');
-                                            console.log(err);
-                                            quit();
-                                        }
-                                    });
-                                });
-                            }
-                        });
-                    }
+                    processPageFiles(src, dest, name);
 
                     console.log('');
                     console.log(`Page ${name} created!`);
@@ -87,6 +92,36 @@
         });
     }
 
+    const processComponentFiles = (src, dest, name) => {
+        const assets = [
+            'index.js',
+            'html.js',
+            'css.js'
+        ];
+
+        for (let asset of assets) {
+            fsExtra.readFile(`${src}${asset}`, function (err, data) {
+                if (err) {
+                    throw err
+                } else {
+                    data = data.toString();
+                    // replace component name
+                    data = data.replaceAll('c-_TEMPLATE_', `c-${name.toLowerCase()}`);
+                    data = data.replaceAll('_TEMPLATE_', capitalizeFirstLetter(name));
+                    fsExtra.mkdir(dest, function (err) {
+                        fsExtra.writeFile(`${dest}${asset}`, data, function (err) {
+                            if (err) {
+                                console.log('An error occurred when writing');
+                                console.log(err);
+                                quit();
+                            }
+                        });
+                    });
+                }
+            });
+        }
+    }
+
     const createComponent = (appName) => {
         displayLogo();
         console.log(`Please enter the name of the component you would like to create in the ${appName} application, or press ENTER to cancel: `);
@@ -96,33 +131,7 @@
             const dest = `${path.resolve()}${appsDirectory}${appName}/components/${capitalizeFirstLetter(name)}/`;
             if (name !== '') {
                 if (!fs.existsSync(dest)) {
-                    const assets = [
-                        'index.js',
-                        'html.js',
-                        'css.js'
-                    ];
-
-                    for (let asset of assets) {
-                        fsExtra.readFile(`${src}${asset}`, function (err, data) {
-                            if (err) {
-                                throw err
-                            } else {
-                                data = data.toString();
-                                // replace component name
-                                data = data.replaceAll('c-_TEMPLATE_', `c-${name.toLowerCase()}`);
-                                data = data.replaceAll('_TEMPLATE_', capitalizeFirstLetter(name));
-                                fsExtra.mkdir(dest, function (err) {
-                                    fsExtra.writeFile(`${dest}${asset}`, data, function (err) {
-                                        if (err) {
-                                            console.log('An error occurred when writing');
-                                            console.log(err);
-                                            quit();
-                                        }
-                                    });
-                                });
-                            }
-                        });
-                    }
+                    processComponentFiles(src, dest, name);
 
                     console.log('');
                     console.log(`Component ${name} created!`);
@@ -188,6 +197,43 @@
         });
     }
 
+    const processAppFiles = (src, dest, name) => {
+        renameApplicationIndex(name);
+        remameApplicationStyleSheet(name);
+        console.log('');
+        console.log(`${name} application created!`);
+        console.log('');
+        console.log(`Would you like to set ${name} as the default application? [y/n]`);
+        process.stdin.once('data', (selection) => {
+            selection = selection.toString().trim();
+
+            if (selection.toLowerCase() === 'y' || selection.toLowerCase() === 'yes') {
+                defaultApp(name);
+            } else {
+                displayMainMenu();
+            }
+
+        });
+    }
+
+    const copyAppFiles = (src, dest, name) => {
+        fsExtra.copy(src, dest, {
+            filter: function (file) {
+                if (file.indexOf('.DS') === -1) {
+                    return file;
+                }
+            }
+        }, function (err) {
+            if (err) {
+                console.log('An error occurred when copying');
+                console.log(err);
+                quit();
+            } else {
+                processAppFiles(src, dest, name);
+            }
+        });
+    };
+
     const createApp = () => {
         displayLogo();
         console.log(`Please enter the name of the application you would like to create, or press ENTER to cancel: `);
@@ -197,45 +243,7 @@
             const dest = `${path.resolve()}${appsDirectory}${name}`;
             if (name !== '') {
                 if (!fs.existsSync(dest)) {
-                    fsExtra.copy(src, dest, {
-                        filter: function (file) {
-                            if (file.indexOf('.DS') === -1) {
-                                return file;
-                            }
-                        }
-                    }, function (err) {
-                        if (err) {
-                            console.log('An error occurred when copying');
-                            console.log(err);
-                            quit();
-                        } else {
-                            renameApplicationIndex(name);
-                            remameApplicationStyleSheet(name);
-
-                            let apps = [];
-
-                            fsExtra.readdirSync(`${path.resolve()}${appsDirectory}`).filter((file) => {
-                                if (fsExtra.statSync(path.join(`${path.resolve()}${appsDirectory}`, file)).isDirectory()) {
-                                    apps.push(file);
-                                }
-                            });
-
-                            console.log('');
-                            console.log(`${name} application created!`);
-                            console.log('');
-                            console.log(`Would you like to set ${name} as the default application? [y/n]`);
-                            process.stdin.once('data', (selection) => {
-                                selection = selection.toString().trim();
-
-                                if (selection.toLowerCase() === 'y' || selection.toLowerCase() === 'yes') {
-                                    defaultApp(name);
-                                } else {
-                                    displayMainMenu();
-                                }
-
-                            });
-                        }
-                    });
+                    copyAppFiles(src, dest, name);
                 } else {
                     console.log('');
                     console.log(`The ${name} application already exists!`);
@@ -245,7 +253,6 @@
                         displayMainMenu();
                     });
                 }
-
             } else {
                 displayMainMenu();
             }
@@ -286,6 +293,23 @@
         });
     }
 
+    const processSelection = (selection, apps, callback, prompt) => {
+        console.log(selection);
+        console.log(apps);
+        console.log(isNaN(selection))
+        if (isNaN(selection) === false) {
+            if (selection > 0 && selection <= apps.length) {
+                if (typeof callback === 'function') {
+                    callback(apps[selection - 1]);
+                }
+            } else {
+                selectApp(callback, prompt);
+            }
+        } else {
+            displayMainMenu();
+        }
+    };
+
     const selectApp = (callback, prompt) => {
         displayLogo();
         if (prompt === '' || prompt === undefined) {
@@ -310,19 +334,8 @@
 
         process.stdin.once('data', (selection) => {
             selection = parseInt(selection.toString().trim(), 10);
+            processSelection(selection, apps, callback, prompt);
 
-            if (isNaN(selection) === false) {
-                if (selection > 0 && selection <= apps.length) {
-                    if (typeof callback === 'function') {
-                        callback(apps[selection - 1]);
-                    }
-                } else {
-                    selectApp(callback, prompt);
-                }
-
-            } else {
-                displayMainMenu();
-            }
         });
     }
 

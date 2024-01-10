@@ -1,5 +1,9 @@
 # Changelog
 
+## v.1.1.1
+
+- fixed sonarqube issues with moonsault create commmand line app
+
 ## v.1.1.0
 
 - add event listener to hello world component
