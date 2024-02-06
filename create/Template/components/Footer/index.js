@@ -5,14 +5,16 @@ import html from './html.js';
 import css from './css.js';
 
 // web component
-class Footer extends HTMLElement {
+customElements.define(componentName, class extends HTMLElement {
+
+    loaded = false;
+
     // connect component
     connectedCallback() {
-        buildComponent(componentName, html, css, this);
+        if (this.loaded === false) {
+            this.loaded = true;
+            buildComponent(componentName, html, css, this);
+        }
+
     }
-}
-
-// register component
-customElements.define(componentName, Footer);
-
-export default Footer;
+});
