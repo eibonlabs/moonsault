@@ -5,15 +5,16 @@ import html from './html.js';
 import css from './css.js';
 
 // web component
-class About extends HTMLElement {
+customElements.define(componentName, class extends HTMLElement {
+
+    loaded = false;
+
     // connect component
     connectedCallback() {
-        buildComponent(componentName, html, css, this);
-        console.info('About Page Connected');
+        if (this.loaded === false) {
+            this.loaded = true;
+            buildComponent(componentName, html, css, this);
+            console.info('About Page Connected');
+        }
     }
-}
-
-// register component
-customElements.define(componentName, About);
-
-export default About;
+});
