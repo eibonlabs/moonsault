@@ -4,26 +4,57 @@ import { buildComponent } from '../../../../lib/moonsault.js';
 import html from './html.js';
 import css from './css.js';
 
+
+/* example html
+    <c-window 
+        data-x-position="0px" 
+        data-y-position="0px" 
+        data-width="600px"
+        data-height="300px"
+        data-draggable="true" 
+        data-resizable="true" 
+        data-maximize="true" 
+        data-minimize="true" 
+        data-close="true" 
+    >
+        <c-hello-world></c-hello-world>
+    </c-window>
+*/
 // web component
 customElements.define(componentName, class extends HTMLElement {
+    constructor() {
+        super();
 
-    loaded = false;
+        buildComponent(componentName, html, css, this);
 
-    /* example html
-        <c-window 
-            data-x-position="0px" 
-            data-y-position="0px" 
-            data-width="600px"
-            data-height="300px"
-            data-draggable="true" 
-            data-resizable="true" 
-            data-maximize="true" 
-            data-minimize="true" 
-            data-close="true" 
-        >
-            <c-hello-world></c-hello-world>
-        </c-window>
-    */
+        this.classList.add('window-parent');
+
+        this.#setModel();
+
+        this.#setWindowContents();
+
+        this.#setBringToFront();
+
+        if (this.#model.draggable === 'true') {
+            this.#setDraggable();
+        }
+
+        if (this.#model.maximize === 'true') {
+            this.#setMaximize();
+        }
+
+        if (this.#model.minimize === 'true') {
+            this.#setMinimize();
+        }
+
+        if (this.#model.close === 'true') {
+            this.#setClose();
+        }
+
+        if (this.#model.resizable === 'true') {
+            this.#enableResizable();
+        }
+    }
 
     #model = {
         xPosition: null,
@@ -279,29 +310,6 @@ customElements.define(componentName, class extends HTMLElement {
 
     // connect component
     connectedCallback() {
-        if (this.loaded === false) {
-            this.loaded = true;
-            buildComponent(componentName, html, css, this);
-            this.classList.add('window-parent');
-            this.#setModel();
-            this.#setWindowContents();
-            this.#setBringToFront();
-            if (this.#model.draggable === 'true') {
-                this.#setDraggable();
-            }
-            if (this.#model.maximize === 'true') {
-                this.#setMaximize();
-            }
-            if (this.#model.minimize === 'true') {
-                this.#setMinimize();
-            }
-            if (this.#model.close === 'true') {
-                this.#setClose();
-            }
-            if (this.#model.resizable === 'true') {
-                this.#enableResizable();
-            }
-            this.#render();
-        }
+        this.#render();
     }
 });

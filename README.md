@@ -151,8 +151,6 @@ Components and pages can have public APIs, and this will allow you to access met
 
 For example, the HelloWorld component has a `helloWorld` public method. To access it, you could run `moonsault.pageComponents["c-hello-world"].helloWorld()` in your web developer tools console, when on the `#/home` route. This would then display "You called the public API!".
 
-Components and pages also have a `loaded` public property that is set in the connectedCallback in order to prevent re-rendering of a component when it's position in the DOM changes.
-
 [⬆ Back to TOC](#table-of-contents)
 
 ## Application - app.js
