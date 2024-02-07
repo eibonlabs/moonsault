@@ -6,8 +6,14 @@ import css from './css.js';
 
 // web component
 customElements.define(componentName, class extends HTMLElement {
+    constructor() {
+        super();
 
-    loaded = false;
+        buildComponent(componentName, html, css, this);
+        this.querySelector('#helloWorldButton').addEventListener('click', (e) => {
+            this.helloWorld();
+        })
+    }
 
     helloWorld() {
         alert('Hello World!');
@@ -16,13 +22,6 @@ customElements.define(componentName, class extends HTMLElement {
 
     // connect component
     connectedCallback() {
-        if (this.loaded === false) {
-            this.loaded = true;
-            buildComponent(componentName, html, css, this);
-            this.querySelector('#helloWorldButton').addEventListener('click', (e) => {
-                this.helloWorld();
-            })
-        }
-
+        console.info('HelloWorld Component Connected');
     }
 });
