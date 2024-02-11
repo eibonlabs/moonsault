@@ -314,4 +314,24 @@ Here is an example of the html used for including a windowed component:
 
 Simply put the component you want windowed as a child of your c-window tag, and you are good to go!
 
+## Data Binding (Beta)
+
+Data binding is provided through the bind module, and there is a full example in the BindingExample component. You can test this component by including it in your page, just as you would any other component.
+
+In your page's `html.js` file, include the following at the top of the file:  
+`import '../../components/BindingExample/index.js';`
+
+And then include the component tag within your html variable:
+
+`<c-binding-example></c-binding-example>`
+
+You can bind data in your component to an element in your page, or pass the updated data to a function. The bind function requires four parameters:
+
+- context: the object that your changing properties are attached to
+- property name: the name of the property on your object that you want to change
+- initial value: the initial value of the property
+- element or callback: the element that you want to update as data changes, or function to pass the updated value to.
+
+Please see the BindingExample component for more examples.
+
 [⬆ Back to TOC](#table-of-contents)

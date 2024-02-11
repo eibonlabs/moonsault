@@ -2,12 +2,13 @@
 
 ## v.1.2.0
 
+- added data binding
 - updated how components are constructed and removed exports. customElements.define gets called when the module is loaded, so there is nothing to export.
 - new window component can load components into a moveable window
   - the window component is in beta
   - the window component requires a parent element that is set to the size you want the window to maximize to. for example, if you want the window to maximize to full screen and minimize to the bottom of the screen, you will need a parent element that is set to those dimensions.
   - more concrete examples will be made available once the component is out of beta, but feel free to poke around and take a look at how it works!
-- updated README.md to include the above updates.
+- updated README.md to include the above updates with more documentation.
 
 ## v.1.1.1
 
