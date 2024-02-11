@@ -2,23 +2,14 @@ const componentName = 'c-header';
 
 import { buildComponent } from '../../../../lib/moonsault.js';
 import { getRouteFromURL } from '../../../../lib/router.js';
-
 import html from './html.js';
 import css from './css.js';
 
 // web component
-class Header extends HTMLElement {
-    setAriaCurrentAttribute(anchor) {
-        anchor.addEventListener('click', (e) => {
-            console.log(e.target)
-            this.querySelector('nav a[aria-current="page"]')?.removeAttribute('aria-current');
-            e.target.setAttribute('aria-current', 'page');
-        });
+customElements.define(componentName, class extends HTMLElement {
+    constructor() {
+        super();
 
-    }
-
-    // connect component
-    connectedCallback() {
         buildComponent(componentName, html, css, this);
         const currentRoute = getRouteFromURL();
         const anchors = this.querySelectorAll('nav a');
@@ -29,9 +20,17 @@ class Header extends HTMLElement {
             this.setAriaCurrentAttribute(anchor);
         }
     }
-}
 
-// register component
-customElements.define(componentName, Header);
+    setAriaCurrentAttribute(anchor) {
+        anchor.addEventListener('click', (e) => {
+            console.log(e.target)
+            this.querySelector('nav a[aria-current="page"]')?.removeAttribute('aria-current');
+            e.target.setAttribute('aria-current', 'page');
+        });
+    }
 
-export default Header;
+    // connect component
+    connectedCallback() {
+        console.info('Header Component Connected');
+    }
+});

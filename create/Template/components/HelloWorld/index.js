@@ -5,23 +5,23 @@ import html from './html.js';
 import css from './css.js';
 
 // web component
-class HelloWorld extends HTMLElement {
-    helloWorld() {
-        alert('Hello World!');
-        console.log('You called the public API!');
-    }
+customElements.define(componentName, class extends HTMLElement {
+    constructor() {
+        super();
 
-
-    // connect component
-    connectedCallback() {
         buildComponent(componentName, html, css, this);
         this.querySelector('#helloWorldButton').addEventListener('click', (e) => {
             this.helloWorld();
         })
     }
-}
 
-// register component
-customElements.define(componentName, HelloWorld);
+    helloWorld() {
+        alert('Hello World!');
+        console.log('You called the public API!');
+    }
 
-export default HelloWorld;
+    // connect component
+    connectedCallback() {
+        console.info('HelloWorld Component Connected');
+    }
+});

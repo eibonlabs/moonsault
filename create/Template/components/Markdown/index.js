@@ -6,7 +6,16 @@ import html from './html.js';
 import css from './css.js';
 
 // web component
-class Markdown extends HTMLElement {
+customElements.define(componentName, class extends HTMLElement {
+    constructor() {
+        super();
+
+        buildComponent(componentName, html, css, this);
+        console.info('Markdown Page Connected');
+        const src = `${moonsault.currentAppPath}assets/content/${this.getAttribute('data-src')}`;
+        this.getMarkdownFile(src);
+    }
+
     async getMarkdownFile(src) {
         await fetch(src).then(response => {
             if (!response.ok) {
@@ -21,14 +30,6 @@ class Markdown extends HTMLElement {
 
     // connect component
     connectedCallback() {
-        buildComponent(componentName, html, css, this);
-        console.info('Markdown Page Connected');
-        const src = `${moonsault.currentAppPath}assets/content/${this.getAttribute('data-src')}`;
-        this.getMarkdownFile(src);
+        console.info('MarkDown Component Connected');
     }
-}
-
-// register component
-customElements.define(componentName, Markdown);
-
-export default Markdown;
+});
