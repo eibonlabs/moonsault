@@ -5,7 +5,7 @@ A super lightweight framework for building applications with native web componen
 1. Use native web technologies to create a framework for building applications. Nothing proprietary. Nothing special.
 2. Allow individual applications within the framework to set up public APIs to allow for data sharing. Moonsault does not have restrictions on how data can be shared since any public method could be used to send data to another public method.
 3. Pages and components are simple web components with their own public and private APIs.
-4. ES6 modules can be leveraged to split up the codebase into easy to manage parts.
+4. ES6 modules and imports can be leveraged to split up the codebase into easy to manage parts.
 5. Build processes are supported, but not required in order to facilitate deployment to any environment.
 
 # Table of Contents
@@ -21,6 +21,7 @@ A super lightweight framework for building applications with native web componen
   - [routes.js](#application---routesjs)
 - [Deployment](#deployment)
 - [Dependencies](#dependencies)
+- [Example Components](#examples)
 
 # Getting Started
 
@@ -214,7 +215,7 @@ In your component, you could have `<span data-localize="hello"></span>`, and dep
 
 ## Application - routes.js
 
-The routes.js module sets up all of the routes available in your application. It uses imports to import the pages, and then sets up key/value pairs to map a hash in the URL to the web component that should be displayed for the page. Pages are populated in the `#page` element that is defined in `app.js`. Here is an example:
+The routes.js module sets up all of the routes available in your application. It uses imports to import the pages (and their components), and then sets up key/value pairs to map a hash in the URL to the web component that should be displayed for the page. Pages are populated in the `#page` element that is defined in `app.js`. Here is an example:
 
 ```
 /* import pages here */
@@ -231,6 +232,8 @@ const routes = {
 
 export { routes };
 ```
+
+When a page is imported through the routes module, it is also importing all of the components in the page. This means that all components for the application are ready for use on application start.
 
 [⬆ Back to TOC](#table-of-contents)
 
@@ -266,5 +269,69 @@ Fs-extra is used by the moonsault create command line app for copying files from
 It's completely possible to build moonsault applications without these dependencies, but they do make life a little easier :)
 
 Moonsault has been scanned with [sonarqube](https://www.sonarsource.com/products/sonarqube/), and the only problems are the cognitive complexity score for the moonsault create command line application. This will be fixed in the future, though. The framework itself, along with the template app should pass the scan without any problems.
+
+[⬆ Back to TOC](#table-of-contents)
+
+# Examples
+
+## Markdown
+
+This component is used for displaying markdown content. Markdown files go in your application's `assets/content` directory. The following code shows how you would use the component:
+
+`<c-markdown data-src="HelloWorld.md"></c-markdown>`
+
+Make sure that you `import` the markdown component in any page (or component) that is using it, like this:
+
+page level import insid your page's html.js file
+`import '../../components/Markdown/index.js';`
+
+component level import inside your component's html.js file
+
+`import '../Markdown/index.js';`
+
+## Window (Beta)
+
+This is a component that can be used to wrap an existing component in a window GUI. It provides functionality for maximizing, minimizing, resizing and closing windows. In order for maximizing and minimizing to work correctly, you'll need to make sure the parent container of the window is positioned in a way to allow for maximizing and minimizing to work (this usually means setting a fixed width and height to 100%).
+
+Here is an example of the html used for including a windowed component:
+
+```
+<c-window
+  data-x-position="200"
+  data-y-position="100"
+  data-width="300px"
+  data-height="300px"
+  data-draggable="true"
+  data-resizable="true"
+  data-maximize="true"
+  data-minimize="true"
+  data-close="true"
+  data-pin="true"
+>
+  <c-hello-world></c-hello-world>
+</c-window>
+```
+
+Simply put the component you want windowed as a child of your c-window tag, and you are good to go!
+
+## Data Binding (Beta)
+
+Data binding is provided through the bind module, and there is a full example in the BindingExample component. You can test this component by including it in your page, just as you would any other component.
+
+In your page's `html.js` file, include the following at the top of the file:  
+`import '../../components/BindingExample/index.js';`
+
+And then include the component tag within your html variable:
+
+`<c-binding-example></c-binding-example>`
+
+You can bind data in your component to an element in your page, or pass the updated data to a function. The bind function requires four parameters:
+
+- context: the object that your changing properties are attached to
+- property name: the name of the property on your object that you want to change
+- initial value: the initial value of the property
+- element or callback: the element that you want to update as data changes, or function to pass the updated value to.
+
+Please see the BindingExample component for more examples.
 
 [⬆ Back to TOC](#table-of-contents)

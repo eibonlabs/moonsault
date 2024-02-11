@@ -5,14 +5,15 @@ import html from './html.js';
 import css from './css.js';
 
 // web component
-class Footer extends HTMLElement {
-    // connect component
-    connectedCallback() {
+customElements.define(componentName, class extends HTMLElement {
+    constructor() {
+        super();
         buildComponent(componentName, html, css, this);
     }
-}
 
-// register component
-customElements.define(componentName, Footer);
 
-export default Footer;
+    // connect component
+    connectedCallback() {
+        console.info('Footer Component Connected');
+    }
+});
