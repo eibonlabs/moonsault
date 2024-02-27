@@ -289,6 +289,38 @@ component level import inside your component's html.js file
 
 `import '../Markdown/index.js';`
 
+## AnimateInView
+
+This component allows you to wrap another component and place an animation on it that will play when the element comes into view.
+
+Make sure that you `import` the AnimateInView component in any page (or component) that is using it, like this:
+
+page level import insid your page's html.js file
+`import '../../components/AnimateInView/index.js';`
+
+component level import inside your component's html.js file
+
+`import '../AnimateInView/index.js';`
+
+To use the component, wrap another component with the AnimateInView component.
+
+```
+ <c-animate-in-view data-transition="slideInFromLeft" data-reset="true">
+            <c-markdown data-src="HelloWorld.md"></c-markdown>
+        </c-animate-in-view>
+```
+
+The data-transition attribute tells the component which transition to apply. These transitions are defined in the component's css.js file. The following transitions are available by default:
+
+- slideInFromLeft
+- slideInFromRight
+- slideInFromBottom
+- slideInFromTop
+- flipOverVertical
+- flipOverHorizontal
+
+The data-reset attribute tells the component to reset the animation when the element is no longer on screen. This allows the component to replay the transition any time the component comes into view.
+
 ## Window (Beta)
 
 This is a component that can be used to wrap an existing component in a window GUI. It provides functionality for maximizing, minimizing, resizing and closing windows. In order for maximizing and minimizing to work correctly, you'll need to make sure the parent container of the window is positioned in a way to allow for maximizing and minimizing to work (this usually means setting a fixed width and height to 100%).
