@@ -1,5 +1,9 @@
 # Changelog
 
+## v.1.2.1
+
+- added the AnimateInView component. This component allows you to wrap another component and place an animation on it that will play when the element comes into view.
+
 ## v.1.2.0
 
 - added data binding
