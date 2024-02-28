@@ -259,6 +259,9 @@ Other dependecies that are included in this repo are:
 - [jsdoc](https://github.com/jsdoc/jsdoc)
 - [swagger-jsdoc](https://github.com/Surnet/swagger-jsdoc)
 - [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express)
+- [marked.js](https://github.com/markedjs/marked)
+
+## Server Side
 
 JSDoc and swagger are used for code documentation, and are not real dependencies in the framework.
 
@@ -266,7 +269,11 @@ Express is used for setting up a local server for hosting the framework, and als
 
 Fs-extra is used by the moonsault create command line app for copying files from the template into the target application.
 
-It's completely possible to build moonsault applications without these dependencies, but they do make life a little easier :)
+## Client Side
+
+Marked.js is part of the markdown component, and is used for parsing markdown files and converting them to HTML.
+
+It's completely possible to build moonsault applications without these dependencies, but they do make life a little easier :) The framework itself does not have any, so feel free to remove any depedencies that aren't needed.
 
 Moonsault has been scanned with [sonarqube](https://www.sonarsource.com/products/sonarqube/), and should pass the scan locally without any problems.
 
