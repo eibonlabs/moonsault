@@ -243,7 +243,7 @@ Moonsault uses [esbuild](https://esbuild.github.io) to produce a distributable b
 
 The contents of the `public` directory can then be copied over to the server of your choice.
 
-Althought builds are automatically generated, you can also just copy over the contents of the `src` directory to the server of your choice, as well. This provided flexibility for environments that may have not approved the use of esbuild.
+Although builds are automatically generated, you can also just copy over the contents of the `src` directory to the server of your choice, as well. This provided flexibility for environments that may have not approved the use of esbuild.
 
 [⬆ Back to TOC](#table-of-contents)
 
