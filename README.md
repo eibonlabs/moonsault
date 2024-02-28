@@ -249,7 +249,7 @@ Althought builds are automatically generated, you can also just copy over the co
 
 # Dependencies
 
-Moonsault itself does not have dependencies, but the tooling that goes along with it, does. For example, in order to use the moonsault create command line application, you need to have [node.js](https://nodejs.org) installed, along with the [fs-extra](https://github.com/jprichardson/node-fs-extra) package. Some components, such as the markdown component include their own libraries, as well.
+Moonsault itself does not have dependencies, but the tooling that goes along with it, does. For example, in order to use the moonsault create command line application, you need to have [node.js](https://nodejs.org) installed, along with the [fs-extra](https://github.com/jprichardson/node-fs-extra) package. Some components, such as the markdown component may include their own libraries, as well.
 
 Other dependecies that are included in this repo are:
 
