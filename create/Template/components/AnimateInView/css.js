@@ -1,6 +1,6 @@
 const css = `
   c-animate-in-view {
-    overflow: auto;
+    overflow: visible;
     display:flex;
     transition-property:all;
     transition-duration: 0.5s;
@@ -66,6 +66,35 @@ const css = `
   c-animate-in-view[data-transition="flipOverHorizontal"].animate {
     opacity:1;
     transform: rotateY(0deg);
+  }
+
+  c-animate-in-view[data-transition="zoomIn"] {
+    opacity:0;
+    transform:scale(0.5);
+    transformOrigin: center;
+  }
+  c-animate-in-view[data-transition="zoomIn"].animate {
+    opacity:1;
+    transform:scale(1);
+  }
+
+  c-animate-in-view[data-transition="zoomOut"] {
+    opacity:0;
+    transform:scale(1.5);
+    transformOrigin: center;
+  }
+  c-animate-in-view[data-transition="zoomOut"].animate {
+    opacity:1;
+    transform:scale(1);
+  }
+
+  c-animate-in-view[data-transition="unblur"] {
+   
+    filter:blur(20px)
+  }
+  c-animate-in-view[data-transition="unblur"].animate {
+   
+    filter:blur(0px)
   }
 `;
 

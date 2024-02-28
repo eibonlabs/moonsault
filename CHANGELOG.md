@@ -1,5 +1,13 @@
 # Changelog
 
+## v.1.2.2
+
+- added unblur, zoomIn, and zoomOut transitions for the AnimateInView component
+- update overflow on AnimateInView component to be visible
+- fix margin in header component
+- remove height from framework.css
+- added LookAtCursor component. This component allows you to wrap another component and have that component rotate to look at the cursor as it moves around. The component provides a data-origin-element attribute that will let you define where the cursor should be tracking from. For example, you could set data-origin-element="body". This is useful for doing things like having a group of elements all keep perspective while scrolling down the page.
+
 ## v.1.2.1
 
 - added the AnimateInView component. This component allows you to wrap another component and place an animation on it that will play when the element comes into view.

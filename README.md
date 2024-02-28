@@ -282,7 +282,7 @@ This component is used for displaying markdown content. Markdown files go in you
 
 Make sure that you `import` the markdown component in any page (or component) that is using it, like this:
 
-page level import insid your page's html.js file
+page level import inside your page's html.js file
 `import '../../components/Markdown/index.js';`
 
 component level import inside your component's html.js file
@@ -295,7 +295,7 @@ This component allows you to wrap another component and place an animation on it
 
 Make sure that you `import` the AnimateInView component in any page (or component) that is using it, like this:
 
-page level import insid your page's html.js file
+page level import inside your page's html.js file
 `import '../../components/AnimateInView/index.js';`
 
 component level import inside your component's html.js file
@@ -305,9 +305,9 @@ component level import inside your component's html.js file
 To use the component, wrap another component with the AnimateInView component.
 
 ```
- <c-animate-in-view data-transition="slideInFromLeft" data-reset="true">
-            <c-markdown data-src="HelloWorld.md"></c-markdown>
-        </c-animate-in-view>
+<c-animate-in-view data-transition="slideInFromLeft" data-reset="true">
+  <c-markdown data-src="HelloWorld.md"></c-markdown>
+</c-animate-in-view>
 ```
 
 The data-transition attribute tells the component which transition to apply. These transitions are defined in the component's css.js file. The following transitions are available by default:
@@ -318,8 +318,36 @@ The data-transition attribute tells the component which transition to apply. The
 - slideInFromTop
 - flipOverVertical
 - flipOverHorizontal
+- zoomIn
+- zoomOut
+- unblur
 
 The data-reset attribute tells the component to reset the animation when the element is no longer on screen. This allows the component to replay the transition any time the component comes into view.
+
+## Look At Cursor
+
+This component allows you to wrap another component and have that component rotate to look at the cursor as it moves around.
+
+Make sure that you `import` the LookAtCursor component in any page (or component) that is using it, like this:
+
+page level import inside your page's html.js file
+`import '../../components/LookAtCursor/index.js';`
+
+component level import inside your component's html.js file
+
+`import '../LookAtCursor/index.js';`
+
+To use the component, wrap another component with the LookAtCursor component.
+
+```
+<c-look-at-cursor data-parent="">
+  <c-markdown data-src="HelloWorld.md"></c-markdown>
+</c-look-at-cursor>
+```
+
+The component provides a data-origin-element attribute that will let you define where the cursor should be tracking from. For example, you could set data-origin-element="body". This is useful for doing things like having a group of elements all keep perspective while scrolling down the page.
+
+If no data-origin-element attribute is specifed, or it is empty, it will track from the parent of the component.
 
 ## Window (Beta)
 

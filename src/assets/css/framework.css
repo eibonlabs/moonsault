@@ -1,6 +1,4 @@
 /* Overall style that is applied to all apps in the apps directory */
 @import 'noAppError.css';
 
-html {
-    height: 100%;
-}
+html {}
