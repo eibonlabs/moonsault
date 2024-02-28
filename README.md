@@ -268,7 +268,7 @@ Fs-extra is used by the moonsault create command line app for copying files from
 
 It's completely possible to build moonsault applications without these dependencies, but they do make life a little easier :)
 
-Moonsault has been scanned with [sonarqube](https://www.sonarsource.com/products/sonarqube/), and the only problems are the cognitive complexity score for the moonsault create command line application. This will be fixed in the future, though. The framework itself, along with the template app should pass the scan without any problems.
+Moonsault has been scanned with [sonarqube](https://www.sonarsource.com/products/sonarqube/), and should pass the scan locally without any problems.
 
 [⬆ Back to TOC](#table-of-contents)
 
