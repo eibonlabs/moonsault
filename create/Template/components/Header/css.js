@@ -7,7 +7,7 @@ c-header {
 c-header h1 {
   font-size:20px;
   font-weight:bold;
-  margin-bottom:4px;
+  margin:0px 0px 4px 0px;
   color:#c80b95;
 }
 
