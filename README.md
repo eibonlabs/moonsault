@@ -243,15 +243,15 @@ Moonsault uses [esbuild](https://esbuild.github.io) to produce a distributable b
 
 The contents of the `public` directory can then be copied over to the server of your choice.
 
-Althought builds are automatically generated, you can also just copy over the contents of the `src` directory to the server of your choice, as well. This provided flexibility for environments that may have not approved the use of esbuild.
+Although builds are automatically generated, you can also just copy over the contents of the `src` directory to the server of your choice, as well. This provided flexibility for environments that may have not approved the use of esbuild.
 
 [⬆ Back to TOC](#table-of-contents)
 
 # Dependencies
 
-Moonsault itself does not have dependencies, but the tooling that goes along with it, does. For example, in order to use the moonsault create command line application, you need to have [node.js](https://nodejs.org) installed, along with the [fs-extra](https://github.com/jprichardson/node-fs-extra) package.
+Moonsault itself does not have dependencies, but the tooling that goes along with it, does. For example, in order to use the moonsault create command line application, you need to have [node.js](https://nodejs.org) installed, along with the [fs-extra](https://github.com/jprichardson/node-fs-extra) package. Some components, such as the markdown component may include their own libraries, as well.
 
-Other dependecies that are included in this repo are:
+Dependecies that are included in this repo are:
 
 - [esbuild](https://esbuild.github.io)
 - [express](https://github.com/expressjs/express)
@@ -259,6 +259,9 @@ Other dependecies that are included in this repo are:
 - [jsdoc](https://github.com/jsdoc/jsdoc)
 - [swagger-jsdoc](https://github.com/Surnet/swagger-jsdoc)
 - [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express)
+- [marked.js](https://github.com/markedjs/marked)
+
+## Server Side (Development Environment)
 
 JSDoc and swagger are used for code documentation, and are not real dependencies in the framework.
 
@@ -266,9 +269,15 @@ Express is used for setting up a local server for hosting the framework, and als
 
 Fs-extra is used by the moonsault create command line app for copying files from the template into the target application.
 
+## Client Side
+
+Marked.js is part of the markdown component, and is used for parsing markdown files and converting them to HTML.
+
 It's completely possible to build moonsault applications without these dependencies, but they do make life a little easier :)
 
-Moonsault has been scanned with [sonarqube](https://www.sonarsource.com/products/sonarqube/), and the only problems are the cognitive complexity score for the moonsault create command line application. This will be fixed in the future, though. The framework itself, along with the template app should pass the scan without any problems.
+**The framework itself does not have any dependencies, so feel free to remove any depedencies that aren't needed.**
+
+Moonsault has been scanned with [sonarqube](https://www.sonarsource.com/products/sonarqube/), and should pass the scan locally without any problems.
 
 [⬆ Back to TOC](#table-of-contents)
 
@@ -282,7 +291,7 @@ This component is used for displaying markdown content. Markdown files go in you
 
 Make sure that you `import` the markdown component in any page (or component) that is using it, like this:
 
-page level import insid your page's html.js file
+page level import inside your page's html.js file
 `import '../../components/Markdown/index.js';`
 
 component level import inside your component's html.js file
@@ -295,7 +304,7 @@ This component allows you to wrap another component and place an animation on it
 
 Make sure that you `import` the AnimateInView component in any page (or component) that is using it, like this:
 
-page level import insid your page's html.js file
+page level import inside your page's html.js file
 `import '../../components/AnimateInView/index.js';`
 
 component level import inside your component's html.js file
@@ -305,9 +314,9 @@ component level import inside your component's html.js file
 To use the component, wrap another component with the AnimateInView component.
 
 ```
- <c-animate-in-view data-transition="slideInFromLeft" data-reset="true">
-            <c-markdown data-src="HelloWorld.md"></c-markdown>
-        </c-animate-in-view>
+<c-animate-in-view data-transition="slideInFromLeft" data-reset="true">
+  <c-markdown data-src="HelloWorld.md"></c-markdown>
+</c-animate-in-view>
 ```
 
 The data-transition attribute tells the component which transition to apply. These transitions are defined in the component's css.js file. The following transitions are available by default:
@@ -318,8 +327,36 @@ The data-transition attribute tells the component which transition to apply. The
 - slideInFromTop
 - flipOverVertical
 - flipOverHorizontal
+- zoomIn
+- zoomOut
+- unblur
 
 The data-reset attribute tells the component to reset the animation when the element is no longer on screen. This allows the component to replay the transition any time the component comes into view.
+
+## Look At Cursor
+
+This component allows you to wrap another component and have that component rotate to look at the cursor as it moves around.
+
+Make sure that you `import` the LookAtCursor component in any page (or component) that is using it, like this:
+
+page level import inside your page's html.js file
+`import '../../components/LookAtCursor/index.js';`
+
+component level import inside your component's html.js file
+
+`import '../LookAtCursor/index.js';`
+
+To use the component, wrap another component with the LookAtCursor component.
+
+```
+<c-look-at-cursor data-parent="">
+  <c-markdown data-src="HelloWorld.md"></c-markdown>
+</c-look-at-cursor>
+```
+
+The component provides a data-origin-element attribute that will let you define where the cursor should be tracking from. For example, you could set data-origin-element="body". This is useful for doing things like having a group of elements all keep perspective while scrolling down the page.
+
+If no data-origin-element attribute is specifed, or it is empty, it will track from the parent of the component.
 
 ## Window (Beta)
 
