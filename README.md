@@ -249,7 +249,7 @@ Althought builds are automatically generated, you can also just copy over the co
 
 # Dependencies
 
-Moonsault itself does not have dependencies, but the tooling that goes along with it, does. For example, in order to use the moonsault create command line application, you need to have [node.js](https://nodejs.org) installed, along with the [fs-extra](https://github.com/jprichardson/node-fs-extra) package.
+Moonsault itself does not have dependencies, but the tooling that goes along with it, does. For example, in order to use the moonsault create command line application, you need to have [node.js](https://nodejs.org) installed, along with the [fs-extra](https://github.com/jprichardson/node-fs-extra) package. Some components, such as the markdown component include their own libraries, as well.
 
 Other dependecies that are included in this repo are:
 
@@ -273,7 +273,9 @@ Fs-extra is used by the moonsault create command line app for copying files from
 
 Marked.js is part of the markdown component, and is used for parsing markdown files and converting them to HTML.
 
-It's completely possible to build moonsault applications without these dependencies, but they do make life a little easier :) The framework itself does not have any, so feel free to remove any depedencies that aren't needed.
+It's completely possible to build moonsault applications without these dependencies, but they do make life a little easier :)
+
+**The framework itself does not have any dependencies, so feel free to remove any depedencies that aren't needed.**
 
 Moonsault has been scanned with [sonarqube](https://www.sonarsource.com/products/sonarqube/), and should pass the scan locally without any problems.
 
