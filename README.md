@@ -261,7 +261,7 @@ Other dependecies that are included in this repo are:
 - [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express)
 - [marked.js](https://github.com/markedjs/marked)
 
-## Server Side
+## Server Side (Development Environment)
 
 JSDoc and swagger are used for code documentation, and are not real dependencies in the framework.
 
