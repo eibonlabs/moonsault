@@ -253,6 +253,7 @@ Moonsault itself does not have dependencies, but the tooling that goes along wit
 
 Dependecies that are included in this repo are:
 
+- [concurrently](https://github.com/open-cli-tools/concurrently)
 - [esbuild](https://esbuild.github.io)
 - [express](https://github.com/expressjs/express)
 - [fs-extra](https://github.com/jprichardson/node-fs-extra)
