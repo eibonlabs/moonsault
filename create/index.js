@@ -26,6 +26,18 @@
         }
     }
 
+    const writeFile = (dest, asset, data) => {
+        fsExtra.mkdir(dest, function (err) {
+            fsExtra.writeFile(`${dest}${asset}`, data, function (err) {
+                if (err) {
+                    console.log('An error occurred when writing');
+                    console.log(err);
+                    quit();
+                }
+            });
+        });
+    }
+
     const processPageFiles = (src, dest, name) => {
         const assets = [
             'index.js',
@@ -42,15 +54,7 @@
                     // replace component name
                     data = data.replaceAll('p-_TEMPLATE_', `p-${name.toLowerCase()}`);
                     data = data.replaceAll('_TEMPLATE_', capitalizeFirstLetter(name));
-                    fsExtra.mkdir(dest, function (err) {
-                        fsExtra.writeFile(`${dest}${asset}`, data, function (err) {
-                            if (err) {
-                                console.log('An error occurred when writing');
-                                console.log(err);
-                                quit();
-                            }
-                        });
-                    });
+                    writeFile(dest, asset, data);
                 }
             });
         }
@@ -108,15 +112,7 @@
                     // replace component name
                     data = data.replaceAll('c-_TEMPLATE_', `c-${name.toLowerCase()}`);
                     data = data.replaceAll('_TEMPLATE_', capitalizeFirstLetter(name));
-                    fsExtra.mkdir(dest, function (err) {
-                        fsExtra.writeFile(`${dest}${asset}`, data, function (err) {
-                            if (err) {
-                                console.log('An error occurred when writing');
-                                console.log(err);
-                                quit();
-                            }
-                        });
-                    });
+                    writeFile(dest, asset, data);
                 }
             });
         }
@@ -163,15 +159,7 @@
             } else {
                 data = data.toString();
                 data = data.replaceAll('TemplateApplication', name);
-                fsExtra.mkdir(dest, function (err) {
-                    fsExtra.writeFile(`${dest}`, data, function (err) {
-                        if (err) {
-                            console.log('An error occurred when writing');
-                            console.log(err);
-                            quit();
-                        }
-                    });
-                });
+                writeFile(dest, '', data);
             }
         });
     }
@@ -184,15 +172,7 @@
             } else {
                 data = data.toString();
                 data = data.replaceAll('_TEMPLATE_', name);
-                fsExtra.mkdir(dest, function (err) {
-                    fsExtra.writeFile(`${dest}`, data, function (err) {
-                        if (err) {
-                            console.log('An error occurred when writing');
-                            console.log(err);
-                            quit();
-                        }
-                    });
-                });
+                writeFile(dest, '', data);
             }
         });
     }
@@ -259,6 +239,12 @@
         });
     }
 
+    const waitAndGoToMainMenu = () => {
+        process.stdin.once('data', () => {
+            displayMainMenu();
+        });
+    }
+
     const defaultApp = (appName) => {
         const src = `${path.resolve()}${srcDirectory}index.html`;
         fsExtra.readFile(src, function (err, data) {
@@ -283,9 +269,7 @@
                         console.log(`${appName} is now the default application!`);
                         console.log('');
                         console.log('Press enter to continue.');
-                        process.stdin.once('data', () => {
-                            displayMainMenu();
-                        });
+                        waitAndGoToMainMenu();
                     }
                 });
 
