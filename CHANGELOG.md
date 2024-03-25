@@ -1,8 +1,10 @@
 # Changelog
 
 ## v.1.2.3
+
 - added server side dependency for concurrently in order to make development on Windows a little easier.
 - removed the docs generation from the start task.
+- added support for electron
 
 ## v.1.2.2
 
