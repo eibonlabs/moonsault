@@ -11,7 +11,6 @@ customElements.define(componentName, class extends HTMLElement {
         buildComponent(componentName, html, css, this);
     }
 
-
     // connect component
     connectedCallback() {
         console.info('_TEMPLATE_ Component Connected');

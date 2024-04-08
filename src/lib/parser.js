@@ -10,8 +10,18 @@ const buildTemplateNodes = (template, parentElement) => {
     // build template and attach to web component
     const parsedDOM = new DOMParser().parseFromString(`${template}`, 'text/html').querySelectorAll('body > *');
 
-    // localization
+    // parse DOM elements for route updates for electron and localization
     for (let element of parsedDOM) {
+        if (moonsault.electron === true) {
+            const anchors = element.querySelectorAll('a');
+            for (let a of anchors) {
+                const href = a.getAttribute('href');
+                if (href.indexOf('#/') > -1) {
+                    a.setAttribute('href', `index.html${href}`);
+                }
+            }
+        }
+
         parentElement.appendChild(localize(element));
     }
 };

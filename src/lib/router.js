@@ -61,7 +61,7 @@ const startRouter = () => {
         resolveRoute();
     } else {
         window.location.hash = document.querySelector('#page').getAttribute('data-defaultPage');
-    };
+    }
 }
 
 export { startRouter, getRouteFromURL };

@@ -13,6 +13,7 @@ import { generateRandomValue } from './utils.js';
  * @param pageComponents {object} Components that are available in the currently loaded page.
  */
 window.moonsault = {
+    electron: false,
     config: null,
     currentApp: null,
     currentAppPath: null,
@@ -95,6 +96,11 @@ const setCurrentApp = () => {
  */
 const setCurrentAppPath = () => {
     moonsault.currentAppPath = window.origin + '/apps/' + moonsault.currentApp + '/';
+
+    if (moonsault.electron === true) {
+        moonsault.currentAppPath = 'apps/' + moonsault.currentApp + '/';
+    }
+
 };
 
 /**
@@ -114,16 +120,24 @@ const setConfig = (config) => {
     moonsault.config = config;
 };
 
+
+const checkElectron = () => {
+    if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
+        moonsault.electron = true;
+    }
+}
 /**
  * @function setConfig
  * @description sets up the application
  * @param appSettings {object} - passed in from the application's index.js file. sets the initial configuraitgon file, localization, default template, and routes.
  */
 const setupApp = (appSettings) => {
+
     setConfig(appSettings.config);
     setLocalization(appSettings.localization);
     buildTemplateNodes(appSettings.layout, document.querySelector('body'));
     setRoutes(appSettings.routes);
+
 };
 
 const setAppStyle = () => {
@@ -135,6 +149,7 @@ const setAppStyle = () => {
 }
 
 const start = (() => {
+    checkElectron();
     if (document.querySelector('body').getAttribute('data-app') !== null) {
         setCurrentApp();
         setCurrentAppPath();

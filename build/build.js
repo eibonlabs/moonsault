@@ -33,7 +33,6 @@ const buildAndWatch = async () => {
             minify: true,
             sourcemap: true,
             entryPoints: [`./src/apps/${app}/app.js`],
-
             outfile: `./public/apps/${app}/app.js`
         });
 
