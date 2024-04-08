@@ -23,7 +23,6 @@ customElements.define(componentName, class extends HTMLElement {
 
     setAriaCurrentAttribute(anchor) {
         anchor.addEventListener('click', (e) => {
-            console.log(e.target)
             this.querySelector('nav a[aria-current="page"]')?.removeAttribute('aria-current');
             e.target.setAttribute('aria-current', 'page');
         });
