@@ -48,6 +48,11 @@ const buildAndWatch = async () => {
         });
         console.log('Build complete and watching for changes.');
     }
+    fs.watch(`./src/assets`, { recursive: true }, (eventType, fileName) => {
+        if (eventType === 'change') {
+            buildTools.copy(`./src/assets/${fileName}`, `./public/assets/${fileName}`);
+        }
+    });
 }
 
 
