@@ -34,13 +34,14 @@
  *         description: An error occurred.
  */
 
-const start = (app) => {
+const start = (app, appName) => {
+    console.log('attempting to start hello world')
     // end point
     // this is a super basic end point. when the client makes a request to this
     // url, the server will response
     // this example just returns a model that the client will convert to JSON,
     // but you could put ANY server side code here!
-    app.get('/api/helloWorld', (request, response) => {
+    app.get(`/apps/${appName}/api/helloWorld`, (request, response) => {
         let model = {
             message: 'Hello World!'
         };
