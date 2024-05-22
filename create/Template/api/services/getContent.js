@@ -1,9 +1,10 @@
-const start = (app) => {
-    app.get('/api/getFiles', (request, response) => {
+const start = (app, appName) => {
+    console.log('attempting to start get content')
+    app.get(`/apps/${appName}/api/getContent`, (request, response) => {
         const path = require('path');
         const fs = require('fs');
         //joining path of directory 
-        const directoryPath = path.join(__dirname, '../../public');
+        const directoryPath = path.join(__dirname, '../../assets/content/');
 
 
         //passsing directoryPath and callback function

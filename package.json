@@ -1,13 +1,13 @@
 {
   "name": "moonsault",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "A super lightweight framework for building applications with native web components.",
   "main": "index.html",
   "scripts": {
     "docs": "./node_modules/.bin/jsdoc src/**/*.* --destination docs/docs",
     "build": "node build/build.js",
     "server": "node server/server.js",
-    "start": "concurrently \"npm run server\" \"npm run build\""
+    "start": "concurrently \"npm run build\" \"npm run server\""
   },
   "author": "Eibon.labs",
   "license": "MIT",
