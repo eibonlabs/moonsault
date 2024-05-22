@@ -97,6 +97,9 @@ const buildAndWatch = () => {
         // copy app favicon to public
         buildTools.copy(`./src/apps/${app}/favicon.png`, `./public/apps/${app}/favicon.png`);
 
+        // copy services
+        buildTools.copy(`./src/apps/${app}/api`, `./public/apps/${app}/api`);
+
         // copy app index.html to public
         watchMoonsaultAppIndex(app);
 
