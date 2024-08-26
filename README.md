@@ -284,6 +284,10 @@ Moonsault has been scanned with [sonarqube](https://www.sonarsource.com/products
 
 # Examples
 
+## Request HTML and CSS from files
+
+The TestRequest component is an example of using external HTML and CSS files to populate a web component. The main difference with this approach is that the html and css imports are replaced with async functions that use fetch to request the file contents. The `connectedCallback()` method is async, and uses `await` when calling the `html()` and `css()` methods. The build script supports having these files in the component directory, and will redeploy them automatically when changes are detected.
+
 ## Markdown
 
 This component is used for displaying markdown content. Markdown files go in your application's `assets/content` directory, but you can also point to any URL that you want. The following code shows how you would use the component:
