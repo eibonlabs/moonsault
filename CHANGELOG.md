@@ -6,6 +6,7 @@
 - check if file exists before copying (build.js)
 - add example component that requests plain html and css files for use within compoents and pages
 - add support for copying index.html and index.css from components and pages
+- update express version
 
 ## v.1.3.0
 
