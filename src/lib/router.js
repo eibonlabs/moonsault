@@ -14,6 +14,8 @@ const setPage = (page, route) => {
     // transition out animation has ended.
     pageElement.onanimationend = () => {
         if (pageElement.getAttribute('data-transition') !== 'in') {
+            window.scrollTo(0, 0);
+            document.querySelector('#page').scrollTo(0, 0);
             pageElement.innerHTML = `<${page}></${page}>`;
             pageElement.setAttribute('data-transition', 'in');
             pageElement.setAttribute('data-current-route', route);
