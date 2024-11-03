@@ -1,5 +1,9 @@
 # Changelog
 
+## v.1.3.2
+- modify router to scroll to top of page after loading. this applies to the window, and also the #page element.
+- modify server to not return 403 if requesting JSON, XML, or CSV files from an API directory.
+
 ## v.1.3.1
 
 - fix bug with moonsault.currentAppPath having an extra forward slash

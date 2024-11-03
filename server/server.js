@@ -45,7 +45,10 @@ app.use('/', function (req, res, next) {
 
 // don't return anything from the api directory
 app.use(function (req, res, next) {
-  if (req.url.indexOf('api') > -1) {
+  if (req.url.indexOf('api') > -1 && (
+    req.url.indexOf('json') === -1 &&
+    req.url.indexOf('xml') === -1 &&
+    req.url.indexOf('csv') === -1)) {
     res.sendStatus(403);
   } else {
     next();
