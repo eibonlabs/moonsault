@@ -1,5 +1,5 @@
 
-import { startRouter } from './router.js';
+import { startRouter, buildURL, setURLParam, deleteURLParam } from './router.js';
 import { buildTemplateNodes, buildStyleNodes, loadScript } from './parser.js';
 import { generateRandomValue } from './utils.js';
 
@@ -21,7 +21,14 @@ window.moonsault = {
     localization: null,
     staticComponents: {},
     pageComponents: {},
-    routes: null
+    routes: null,
+    currentRoute: null,
+    previousRoute: null,
+    urlParams: {
+        set: setURLParam,
+        delete: deleteURLParam
+    },
+    buildURL: buildURL,
 };
 
 /**
