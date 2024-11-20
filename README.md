@@ -235,6 +235,52 @@ export { routes };
 
 When a page is imported through the routes module, it is also importing all of the components in the page. This means that all components for the application are ready for use on application start.
 
+### Setting Route Parameters
+
+To set a route parameter, you can use the following code in your component:
+
+`moonsault.urlParams.set('parameterName', 'parameterValue');`
+
+Route parameters are stored in the `moonsault.urlParams.params`.
+
+### Deleting Route Parameters
+
+To delete a route parameter, you can use the following code in your component:
+
+`moonsault.urlParams.delete('parameterName');`
+
+Route parameters are stored in the `moonsault.urlParams.params`.
+
+### Deleting All Route Parameters
+
+To delete all route parameters, you can use the following code in your component:
+
+`moonsault.urlParams.delete();`
+
+Route parameters are stored in the `moonsault.urlParams.params`.
+
+### Building a Route with Parameters and Navigating to It
+
+To navigate to a route and apply all of the currently stored params, you can use the following code in your component:
+
+`moonsault.buildRoute('#/routeName');`
+
+This is usually run after after setting or deleting url paramters.
+
+```
+moonsault.urlParams.set('paramName1', 'paramValue1');
+moonsault.urlParams.set('paramName2', 'paramValue2');
+moonsault.buildRoute('#/routeName');
+```
+
+### Calling a Method on a Component When Route Parameters are Applied
+
+If you would like to call a public method on a component whenever URL parameters change for the current route, you can add the data-on-hash-change attribute. Here is an example:
+
+`<c-hello-world data-on-hash-change="helloWorld"></c-hello-world>`
+
+Note that `helloWorld` is a public method of the hello world component. Whenever url parameters change, this method will now be called.
+
 [⬆ Back to TOC](#table-of-contents)
 
 # Deployment

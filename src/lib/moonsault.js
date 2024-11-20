@@ -1,5 +1,5 @@
 
-import { startRouter, buildURL, setURLParam, deleteURLParam } from './router.js';
+import { startRouter, buildRoute, setURLParam, deleteURLParam } from './router.js';
 import { buildTemplateNodes, buildStyleNodes, loadScript } from './parser.js';
 import { generateRandomValue } from './utils.js';
 
@@ -25,10 +25,11 @@ window.moonsault = {
     currentRoute: null,
     previousRoute: null,
     urlParams: {
+        params: {},
         set: setURLParam,
         delete: deleteURLParam
     },
-    buildURL: buildURL,
+    buildRoute: buildRoute,
 };
 
 /**
@@ -51,6 +52,7 @@ const setLanguage = (languageCode) => {
  * @param component {object} The web component to store in memory.
  */
 const setComponentNameSpace = (componentName, component) => {
+
     const uID = componentName + '_' + generateRandomValue();
 
     // check if component id is empty, and then set
