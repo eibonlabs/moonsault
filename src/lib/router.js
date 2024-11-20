@@ -1,10 +1,12 @@
 const setPage = (page, route) => {
     const pageElement = document.querySelector('#page');
 
-
     // initial page load
     if (pageElement.getAttribute('data-current-route') !== route) {
         moonsault.pageComponents = {};
+
+        // store params from the URL if first page load
+        setParamsFromUrl();
 
         if (pageElement.getAttribute('data-transition') === 'in' && pageElement.getAttribute('data-current-route') !== null) {
             // set the previous route
@@ -68,6 +70,23 @@ const buildRoute = (route) => {
 
     window.location.href = `${currentURL}${params}`;
 }
+
+const setParamsFromUrl = () => {
+    // get params from url
+    const urlParamString = window.location.href.split('?')[1];
+
+    // if params available, parse them and store them in moonsault.urlParams.params
+    if (urlParamString !== undefined) {
+        const urlParams = urlParamString.split('&');
+        for (const urlParam in urlParams) {
+            const currentParam = urlParams[urlParam].split('=');
+            moonsault.urlParams.params[currentParam[0]] = currentParam[1];
+        }
+        // no params available. reset moonsault.urlParams.params
+    } else {
+        moonsault.urlParams.params = {};
+    }
+};
 
 const setURLParam = (param, value) => {
     moonsault.urlParams.params[param] = value;
