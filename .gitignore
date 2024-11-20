@@ -3,4 +3,6 @@ node_modules
 npm_cache
 public
 
+TestApp
+
 out/
