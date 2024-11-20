@@ -4,7 +4,7 @@
 
 - add moonsault.currentRoute and moonsault.previousRoute properties
 - add moonsault.urlParams.set and moonsault.urlParams.delete for managing URL parameters
-- add moonsault.buildURL for building paramater list and and navigating to a route
+- add moonsault.buildRoute for building paramater list and and navigating to a route
 - add support for data-hash-change property on components.
 
 ## v.1.3.2
