@@ -1,9 +1,11 @@
 const setPage = (page, route) => {
     const pageElement = document.querySelector('#page');
-    moonsault.pageComponents = {};
+
 
     // initial page load
     if (pageElement.getAttribute('data-current-route') !== route) {
+        moonsault.pageComponents = {};
+
         if (pageElement.getAttribute('data-transition') === 'in' && pageElement.getAttribute('data-current-route') !== null) {
             // set the previous route
             moonsault.previousRoute = pageElement.getAttribute('data-current-route');
@@ -29,20 +31,24 @@ const setPage = (page, route) => {
         }
         // page is already loaded
     } else {
-
+        for (const component in moonsault.pageComponents) {
+            if (moonsault.pageComponents[component].getAttribute('data-on-hash-change') !== null) {
+                const updateMethod = moonsault.pageComponents[component].getAttribute('data-on-hash-change');
+                moonsault.pageComponents[component][updateMethod]();
+            }
+        }
     }
-
 };
 
-const buildURL = (route) => {
+const buildRoute = (route) => {
     const currentURL = `${window.location.origin}${window.location.pathname}${route}`;
 
     let paramsArray = [];
 
-    for (const param in moonsault.currentRouteParams) {
+    for (const param in moonsault.urlParams.params) {
         paramsArray.push({
             param: param,
-            value: moonsault.currentRouteParams[param]
+            value: moonsault.urlParams.params[param]
         });
     }
 
@@ -64,15 +70,15 @@ const buildURL = (route) => {
 }
 
 const setURLParam = (param, value) => {
-    moonsault.currentRouteParams[param] = value;
+    moonsault.urlParams.params[param] = value;
 };
 
 const deleteURLParam = (param, value) => {
     if (param !== undefined) {
-        delete moonsault.currentRouteParams[param];
+        delete moonsault.urlParams.params[param];
     } else {
-        for (const param in moonsault.currentRouteParams) {
-            delete moonsault.currentRouteParams[param];
+        for (const param in moonsault.urlParams.params) {
+            delete moonsault.urlParams.params[param];
         }
     }
 
@@ -114,4 +120,4 @@ const startRouter = () => {
     }
 }
 
-export { startRouter, getRouteFromURL, buildURL, setURLParam, deleteURLParam };
+export { startRouter, getRouteFromURL, buildRoute, setURLParam, deleteURLParam };
