@@ -1,6 +1,15 @@
 # Changelog
 
+## v.1.3.3
+
+- add initial support for moonsault create GUI
+- add moonsault.currentRoute and moonsault.previousRoute properties
+- add moonsault.urlParams.set and moonsault.urlParams.delete for managing URL parameters
+- add moonsault.buildURL for building paramater list and and navigating to a route
+- add support for data-hash-change property on components
+
 ## v.1.3.2
+
 - modify router to scroll to top of page after loading. this applies to the window, and also the #page element.
 - modify server to not return 403 if requesting JSON, XML, or CSV files from an API directory.
 

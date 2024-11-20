@@ -11,6 +11,7 @@ const source = 'public';
 
 const serveAppFrom = path.resolve() + '/' + source;
 const serveDocsFrom = path.resolve() + '/docs/';
+const serveCreateFrom = path.resolve() + '/create/';
 
 const app = express();
 
@@ -61,6 +62,8 @@ app.use(express.static(serveAppFrom, {
 }));
 
 app.use(express.static(serveDocsFrom, { fallthrough: true }));
+
+app.use(express.static(serveCreateFrom, { fallthrough: true }));
 
 app.get('/', (req, res, next) => {
   next();
