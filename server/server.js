@@ -56,10 +56,7 @@ app.use(function (req, res, next) {
   }
 });
 
-app.use(express.static(serveAppFrom, {
-
-  fallthrough: true
-}));
+app.use(express.static(serveAppFrom, { fallthrough: true }));
 
 app.use(express.static(serveDocsFrom, { fallthrough: true }));
 
