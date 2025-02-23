@@ -1,5 +1,10 @@
 # Changelog
 
+
+## v.1.3.4
+- add wiki docs
+- add PropUpdateExample component. This component shows how to set a property on a web component, and have that trigger a render to udpate data.
+
 ## v.1.3.3
 
 - add moonsault.currentRoute and moonsault.previousRoute properties
