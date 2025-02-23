@@ -1,6 +1,6 @@
 {
   "name": "moonsault",
-  "version": "1.3.2",
+  "version": "1.3.4",
   "description": "A super lightweight framework for building applications with native web components.",
   "main": "index.html",
   "scripts": {
