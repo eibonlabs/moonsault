@@ -50,7 +50,13 @@ app.use(function (req, res, next) {
     req.url.indexOf('json') === -1 &&
     req.url.indexOf('xml') === -1 &&
     req.url.indexOf('csv') === -1)) {
-    res.sendStatus(403);
+      // check to see if running the moonsault create app
+    if ((req.hostname === 'localhost' && req.url.indexOf('/create/api/') > -1) ||
+        (req.hostname === 'localhost' && req.url.indexOf('/api/docs/')) > -1) {
+      next();
+    } else {
+      res.sendStatus(403);
+    }
   } else {
     next();
   }
@@ -60,7 +66,10 @@ app.use(express.static(serveAppFrom, { fallthrough: true }));
 
 app.use(express.static(serveDocsFrom, { fallthrough: true }));
 
+/* moonsault create app */
 app.use(express.static(serveCreateFrom, { fallthrough: true }));
+const createServices = require(`${serveCreateFrom}/create/api/services.js`);
+createServices.start(app);
 
 app.get('/', (req, res, next) => {
   next();

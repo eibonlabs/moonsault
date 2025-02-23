@@ -24,7 +24,7 @@ const start = (app, port) => {
                 },
             ],
         },
-        apis: ["./server/services/*.js"]
+        apis: ["./**/api/services/*.js"]
     });
 
     app.use(
