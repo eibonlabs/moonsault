@@ -4,6 +4,7 @@ const path = require('path');
 const esbuild = require('esbuild');
 
 const buildTools = require('./build-tools.js');
+const { clearInterval } = require('timers');
 
 // copy favicon to public
 buildTools.copy('./src/favicon.png', './public/favicon.png');
@@ -170,21 +171,39 @@ const handleApps = (app) => {
     }
 
 }
+let isChecking = false;
+const checkForDone = () => {
+    isChecking = true;
+    const interval = setInterval(async () => {
+        const request = await fetch('http://localhost:8080/create/api/apps/copying');
+        const response = await request.json();
+        console.log(`Currently copying: ${response}`);
+        if (response === false) {
+            clearInterval(interval);
+            buildAppsArray();
+            handleApps(apps[0]);
+            console.log(apps);
+            console.log('APPS DIRECTORY WRITTEN TO!');
+            isChecking = false;
+        }
+    }, 1000);
+}
 const buildAndWatch = () => {
     fs.watch(`./src/apps/`, { recursive: true }, (eventType, fileName) => {
-        buildAppsArray();
-        handleApps(apps[apps.length - 1]);
+        if (isChecking === false) {
+            checkForDone();
+        }
     });
-
-    // build apps array
-    buildAppsArray();
 
     // copy over index
     watchMoonsaultIndex();
-
+    
+    // build apps array
+    buildAppsArray();
+    
     // moonsault assets at framework level
     watchMoonsaultAssets();
-
+    
     // moonsault library
     buildAndWatchMoonsaultLibrary();
 

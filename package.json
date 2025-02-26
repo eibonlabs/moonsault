@@ -7,7 +7,7 @@
     "docs": "./node_modules/.bin/jsdoc src/**/*.* --destination docs/docs",
     "build": "node build/build.js",
     "server": "node server/server.js",
-    "start": "npm run server"
+    "start": "concurrently \"npm run build\" \"npm run server\""
   },
   "author": "Eibon.labs",
   "license": "MIT",

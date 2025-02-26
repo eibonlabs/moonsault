@@ -17,6 +17,8 @@ const writeFile = (dest, asset, data) => {
     });
 }
 
+let appIsCopying = false;
+
 const renameApplicationIndex = (name) => {
     const dest = `${path.resolve()}${appsDirectory}${name}/index.html`;
     fsExtra.readFile(`${dest}`, function (err, data) {
@@ -70,6 +72,8 @@ const processAppFiles = (src, dest, name, response) => {
     };
 
     response.send(model);
+
+    appIsCopying = false;
 }
 
 const copyAppFiles = (src, dest, name, response) => {
@@ -159,15 +163,18 @@ const start = (app) => {
         response.send(apps);
     });
 
-    let appName = null;
-
     app.param('appName', function (request, response, next, value) {
         request.appName = value;
         next();
     });
 
+    app.get(`/create/api/apps/copying/`, (request, response) => {
+        response.send(appIsCopying);
+    });
+
     // create a new app
     app.post(`/create/api/apps`, (request, response) => {
+        appIsCopying = true;
         console.log(request.body.name);
 
         const name = request.body.name.toString().trim().replaceAll(' ', '');
