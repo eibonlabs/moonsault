@@ -79,7 +79,7 @@
                 const routeString = `'#/${name.toLowerCase()}': 'p-${name.toLowerCase()}`;
                 data = data.slice(0, routeInjectionPoint + 1) + `,\n    ${routeString}` + data.slice(routeInjectionPoint);
 
-                writeFile(`${path.resolve()}${appsDirectory}${appName}/`, `routes.js`, data, name);
+                writeFile(`${path.resolve()}${appsDirectory}${appName}/`, `routes.js`, data);
             }
         });
     };
