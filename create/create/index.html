@@ -322,7 +322,6 @@
             const componentsList = document.querySelector('#components');
             componentsList.textContent = '';
             for (const component in response) {
-                // console.log(response[component]);
                 const li = document.createElement('li');
                 li.textContent = response[component];
                 componentsList.appendChild(li);
@@ -363,7 +362,6 @@
             const pagesList = document.querySelector('#pages');
             pagesList.textContent = '';
             for (const page in response) {
-                // console.log(response[page]);
                 const li = document.createElement('li');
                 li.textContent = response[page];
                 pagesList.appendChild(li);
