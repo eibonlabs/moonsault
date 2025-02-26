@@ -6,6 +6,7 @@
 - update warning message when no apps are set as the default.
 - if only one app available after creating an app, make it the default.
 - fix bug where an application is not displayed when using /apps/ in the url
+- update build to deploy apps when server is running
 
 ## v.1.3.4
 - add wiki docs
