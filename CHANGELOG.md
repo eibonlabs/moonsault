@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.5
+- added moonsault create GUI
+- update command line app to automatically add new pages into routes.js.
+- update warning message when no apps are set as the default.
+- if only one app available after creating an app, make it the default.
+- fix bug where an application is not displayed when using /apps/ in the url
 
 ## v.1.3.4
 - add wiki docs
