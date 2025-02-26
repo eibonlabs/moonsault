@@ -16,16 +16,15 @@ const writeFile = (dest, asset, data, name, response) => {
                     status: 400
                 }
                 response.send(model);
-            } else {
-                if (done === false) {
-                    done = true;
-                    const model = {
-                        message: `The ${name} component was successfully created!`,
-                        status: 200
-                    }
-                    response.send(model);
+            }
+            
+            if (!err && done === false) {
+                done = true;
+                const model = {
+                    message: `The ${name} component was successfully created!`,
+                    status: 200
                 }
-
+                response.send(model);
             }
         });
     });
@@ -68,8 +67,6 @@ const start = (app) => {
         request.appName = value;
         next();
     });
-
-    const src = `${path.resolve()}${appsDirectory}`;
 
     app.get(`/create/api/:appName/components/`, (request, response) => {
         const src = `${path.resolve()}${appsDirectory}/${request.appName}/components/`;

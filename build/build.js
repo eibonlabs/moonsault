@@ -64,12 +64,34 @@ const buildAndWatchMoonsaultApp = async (app) => {
     await context.watch();
 }
 
-const watchMoonsaultAppIndex = (app) => {
+const watchMoonsaultAppIndexAndConfig = (app) => {
+    
     console.log(`Copying and watching: ${app}/index.html`);
     buildTools.copy(`./src/apps/${app}/index.html`, `./public/apps/${app}/index.html`);
     fs.watch(`./src/apps/${app}/index.html`, { recursive: true }, (eventType, fileName) => {
         if (eventType === 'change') {
             buildTools.copy(`./src/apps/${app}/index.html`, `./public/apps/${app}/index.html`);
+        }
+    });
+
+    buildTools.copy(`./src/apps/${app}/routes.js`, `./public/apps/${app}/routes.js`);
+    fs.watch(`./src/apps/${app}/routes.js`, { recursive: true }, (eventType, fileName) => {
+        if (eventType === 'change') {
+            buildTools.copy(`./src/apps/${app}/routes.js`, `./public/apps/${app}/routes.js`);
+        }
+    });
+
+    buildTools.copy(`./src/apps/${app}/localization.js`, `./public/apps/${app}/localization.js`);
+    fs.watch(`./src/apps/${app}/localization.js`, { recursive: true }, (eventType, fileName) => {
+        if (eventType === 'change') {
+            buildTools.copy(`./src/apps/${app}/localization.js`, `./public/apps/${app}/localization.js`);
+        }
+    });
+
+    buildTools.copy(`./src/apps/${app}/config.js`, `./public/apps/${app}/config.js`);
+    fs.watch(`./src/apps/${app}/config.js`, { recursive: true }, (eventType, fileName) => {
+        if (eventType === 'change') {
+            buildTools.copy(`./src/apps/${app}/config.js`, `./public/apps/${app}/config.js`);
         }
     });
 };
@@ -137,7 +159,7 @@ const handleApps = (app) => {
             buildTools.copy(`./src/apps/${app}/api`, `./public/apps/${app}/api`);
 
             // copy app index.html to public
-            watchMoonsaultAppIndex(app);
+            watchMoonsaultAppIndexAndConfig(app);
 
             // watch moonsault app assets
             watchMoonsaultAppsAssets(app);
@@ -157,7 +179,7 @@ const handleApps = (app) => {
         buildTools.copy(`./src/apps/${app}/api`, `./public/apps/${app}/api`);
 
         // copy app index.html to public
-        watchMoonsaultAppIndex(app);
+        watchMoonsaultAppIndexAndConfig(app);
 
         // watch moonsault app assets
         watchMoonsaultAppsAssets(app);

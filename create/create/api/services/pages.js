@@ -16,16 +16,15 @@ const writeFile = (dest, asset, data, name, response) => {
                     status: 400
                 }
                 response.send(model);
-            } else {
-                if (done === false) {
-                    done = true;
-                    const model = {
-                        message: `The ${name} page was successfully created!`,
-                        status: 200
-                    }
-                    response.send(model);
-                }
+            }
 
+            if (!err && done === false) {
+                done = true;
+                const model = {
+                    message: `The ${name} page was successfully created!`,
+                    status: 200
+                }
+                response.send(model);
             }
         });
     });
@@ -79,7 +78,7 @@ const addRoute = (src, dest, name, request, response) => {
             const routeInjectionPoint = data.lastIndexOf("'");
             const routeString = `'#/${name.toLowerCase()}': 'p-${name.toLowerCase()}`;
             data = data.slice(0, routeInjectionPoint + 1) + `,\n    ${routeString}` + data.slice(routeInjectionPoint);
-            
+
             writeFile(`${path.resolve()}${appsDirectory}${request.appName}/`, `routes.js`, data, name, response);
             console.log(data);
         }
@@ -93,8 +92,6 @@ const start = (app) => {
         request.appName = value;
         next();
     });
-
-    const src = `${path.resolve()}${appsDirectory}`;
 
     // set up endpoints for each app to list out app pages
 
@@ -112,27 +109,27 @@ const start = (app) => {
         response.send(pages);
     });
 
-     app.post(`/create/api/:appName/pages`, (request, response) => {
-            console.log(request.body.name);
-    
-            const name = request.body.name.toString().trim().replaceAll(' ', '');
-    
-            const src = `${path.resolve()}${templateDirectory}pages/_TEMPLATE_/`;
-            const dest = `${path.resolve()}${appsDirectory}${request.appName}/pages/${capitalizeFirstLetter(name)}/`;
-    
-            if (name !== '') {
-                if (!fs.existsSync(dest)) {
-                    processPageFiles(src, dest, name, response);
-                    addRoute(`${path.resolve()}${appsDirectory}${request.appName}/routes.js`, `${path.resolve()}${appsDirectory}${request.appName}/routes.js`, name, request, response);
-                } else {
-                    const model = {
-                        message: `The ${name} page already exists.`,
-                        status: 400
-                    }
-                    response.send(model);
+    app.post(`/create/api/:appName/pages`, (request, response) => {
+        console.log(request.body.name);
+
+        const name = request.body.name.toString().trim().replaceAll(' ', '');
+
+        const src = `${path.resolve()}${templateDirectory}pages/_TEMPLATE_/`;
+        const dest = `${path.resolve()}${appsDirectory}${request.appName}/pages/${capitalizeFirstLetter(name)}/`;
+
+        if (name !== '') {
+            if (!fs.existsSync(dest)) {
+                processPageFiles(src, dest, name, response);
+                addRoute(`${path.resolve()}${appsDirectory}${request.appName}/routes.js`, `${path.resolve()}${appsDirectory}${request.appName}/routes.js`, name, request, response);
+            } else {
+                const model = {
+                    message: `The ${name} page already exists.`,
+                    status: 400
                 }
+                response.send(model);
             }
-        });
+        }
+    });
 };
 
 module.exports = { start };
