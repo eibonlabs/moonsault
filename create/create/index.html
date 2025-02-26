@@ -65,7 +65,8 @@
         }
 
         select:hover {
-            box-shadow: inset 0px 0px 10px rgb(90, 210, 50);
+            box-shadow: inset 0px 0px 10px rgba(90, 210, 50, 1),
+            0px 0px 10px rgba(90, 210, 50, 0.5)
         }
 
         button {
@@ -78,12 +79,13 @@
             border-radius: 8px;
             cursor: pointer;
             transition-property: all;
-            transition-duration: 0.15s;
+            transition-duration: 0.20s;
             justify-content: center;
         }
 
         button:hover {
-            box-shadow: inset 0px 0px 10px rgba(238, 22, 179, 1);
+            box-shadow: inset 0px 0px 10px rgba(238, 22, 179, 1),
+            0px 0px 10px rgba(238, 22, 179, 0.5);
         }
 
         #main-container {
