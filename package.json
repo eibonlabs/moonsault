@@ -7,13 +7,13 @@
     "docs": "./node_modules/.bin/jsdoc src/**/*.* --destination docs/docs",
     "build": "node build/build.js",
     "server": "node server/server.js",
-    "start": "concurrently \"npm run build\" \"npm run server\""
+    "start": "npm run server"
   },
   "author": "Eibon.labs",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "esbuild": "^0.18.17",
+    "esbuild": "^0.25.0",
     "express": "^4.19.2",
     "fs-extra": "^10.0.1",
     "jsdoc": "^4.0.0",
