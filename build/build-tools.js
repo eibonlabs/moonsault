@@ -10,7 +10,6 @@ const copy = (src, dest) => {
                 console.log(err);
             }
         });
-        fs.existsSync
     }
 };
 

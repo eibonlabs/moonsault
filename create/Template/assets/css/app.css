@@ -24,7 +24,9 @@ body._TEMPLATE_ {
     color: #ffffff;
 }
 
-._TEMPLATE_ #page>:first-child {}
+._TEMPLATE_ #page>:first-child {
+    background-color: #000000;
+}
 
 /* transition away from a page */
 @keyframes out {
