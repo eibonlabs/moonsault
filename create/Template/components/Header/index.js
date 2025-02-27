@@ -7,9 +7,6 @@ import css from './css.js';
 
 // web component
 customElements.define(componentName, class extends HTMLElement {
-    constructor() {
-        super();
-    }
 
     setAriaCurrentAttribute(anchor) {
         anchor.addEventListener('click', (e) => {
@@ -24,11 +21,12 @@ customElements.define(componentName, class extends HTMLElement {
 
         buildComponent(componentName, html, css, this);
         const currentRoute = getRouteFromURL();
-        const anchors = this.querySelectorAll('nav a');
 
+        const anchors = this.querySelectorAll('a');
+        
         this.querySelector(`a[href="${currentRoute}"]`)?.setAttribute('aria-current', 'page');
-        this.anchors = this.querySelectorAll('a');
-        for (const anchor of this.anchors) {
+        
+        for (const anchor of anchors) {
             this.setAriaCurrentAttribute(anchor);
         }
     }
