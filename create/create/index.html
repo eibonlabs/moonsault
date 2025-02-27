@@ -18,7 +18,7 @@
             background: linear-gradient(180deg, rgba(24, 24, 24, 1) 0%, rgba(0, 0, 0, 1) 100%);
             background-attachment: fixed;
             color: #ffffff;
-            
+
             font-size: 14px;
             padding: 10px 20px;
             margin: 0px;
@@ -41,20 +41,22 @@
         ul {
             list-style-type: none;
             margin: 0px;
-            padding:0px;
+            padding: 0px;
             display: flex;
-            
+
             flex-direction: column;
         }
+
         li {
-            display:flex;
-           
-            margin:0px;
+            display: flex;
+
+            margin: 0px;
             padding: 10px;
-            border-bottom:1px solid rgba(20,20,20,1);
+            border-bottom: 1px solid rgba(20, 20, 20, 1);
         }
+
         li:first-child {
-            padding-top:0px;
+            padding-top: 0px;
         }
 
         select {
@@ -77,7 +79,7 @@
 
         select:hover {
             box-shadow: inset 0px 0px 10px rgba(90, 210, 50, 1),
-            0px 0px 10px rgba(90, 210, 50, 0.5)
+                0px 0px 10px rgba(90, 210, 50, 0.5)
         }
 
         button {
@@ -96,7 +98,7 @@
 
         button:hover {
             box-shadow: inset 0px 0px 10px rgba(238, 22, 179, 1),
-            0px 0px 10px rgba(238, 22, 179, 0.5);
+                0px 0px 10px rgba(238, 22, 179, 0.5);
         }
 
         #main-container {
@@ -307,14 +309,14 @@
                 option.textContent = response[app];
                 appsDropdown.appendChild(option);
             }
-            
-            
-            
-            if (appsDropdown.length === 0) {    
-                    appsDropdown.classList.remove('show');
-                    document.querySelector('#setDefaultApp').classList.remove('show');
-                    model.selectedApp = null;
-                
+
+
+
+            if (appsDropdown.length === 0) {
+                appsDropdown.classList.remove('show');
+                document.querySelector('#setDefaultApp').classList.remove('show');
+                model.selectedApp = null;
+
             } else {
                 model.selectedApp = appsDropdown[0].value;
                 appsDropdown.classList.add('show');
