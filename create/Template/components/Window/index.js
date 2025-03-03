@@ -20,11 +20,9 @@ import css from './css.js';
         <c-hello-world></c-hello-world>
     </c-window>
 */
+
 // web component
 customElements.define(componentName, class extends HTMLElement {
-    constructor() {
-        super();
-    }
 
     #model = {
         xPosition: null,

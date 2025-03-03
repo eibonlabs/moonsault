@@ -17,9 +17,6 @@ const css = async () => {
 
 // web component
 customElements.define(componentName, class extends HTMLElement {
-    constructor() {
-        super();
-    }
 
     // connect component
     async connectedCallback() {

@@ -5,7 +5,8 @@ body {
     margin: 0px;
     font-family: sans-serif;
     font-size: 14px;
-    background-color: #000000;
+    background: rgb(31,8,29);
+    background: linear-gradient(243deg, rgba(31,8,29,1) 0%, rgba(5,11,22,1) 49%, rgba(1,6,8,1) 100%); 
 }
 
 body._TEMPLATE_ {
@@ -15,16 +16,59 @@ body._TEMPLATE_ {
     height: 100%;
 }
 
+._TEMPLATE_ select {
+    margin: 0px;
+    padding: 8px 10px;
+    text-align: center;
+    background: rgb(90, 210, 50);
+    background: linear-gradient(193deg, rgba(90, 210, 50, 1) 0%, rgba(40, 84, 164, 1) 49%, rgba(1, 6, 8, 1) 100%);
+    border: 0px;
+    color: #ffffff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition-property: all;
+    transition-duration: 0.15s;
+}
+
+._TEMPLATE_ select option {
+    color: #000000;
+}
+
+._TEMPLATE_ select:hover {
+    box-shadow: inset 0px 0px 10px rgba(90, 210, 50, 1),
+    0px 0px 10px rgba(90, 210, 50, 0.5)
+}
+
+._TEMPLATE_ button {
+    padding: 8px 10px;
+    background: rgb(238, 22, 179);
+    background: linear-gradient(193deg, rgba(238, 22, 179, 1) 0%, rgba(112, 10, 39, 1) 53%, rgba(39, 10, 128, 1) 100%);
+    border: 0px;
+    color: #ffffff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition-property: all;
+    transition-duration: 0.20s;
+    justify-content: center;
+    margin: 0px 10px;
+}
+
+._TEMPLATE_ button:hover {
+    box-shadow: inset 0px 0px 10px rgba(238, 22, 179, 1),
+    0px 0px 10px rgba(238, 22, 179, 0.5);
+}
+
 ._TEMPLATE_ #page {
     padding: 20px;
     flex: 1;
     overflow: auto;
     display: flex;
-    background-color: #000000;
     color: #ffffff;
 }
 
-._TEMPLATE_ #page>:first-child {}
+._TEMPLATE_ #page>:first-child {
+    background-color: transparent;
+}
 
 /* transition away from a page */
 @keyframes out {

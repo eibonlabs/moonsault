@@ -6,13 +6,6 @@ import css from './css.js';
 
 // web component
 customElements.define(componentName, class extends HTMLElement {
-    constructor() {
-        super();
-    }
-
-    setData() {
-
-    }
 
     // the prop we want to watch
     static observedAttributes = [

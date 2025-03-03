@@ -4,6 +4,7 @@ const path = require('path');
 const esbuild = require('esbuild');
 
 const buildTools = require('./build-tools.js');
+const { clearInterval } = require('timers');
 
 // copy favicon to public
 buildTools.copy('./src/favicon.png', './public/favicon.png');
@@ -42,6 +43,7 @@ const watchMoonsaultAssets = () => {
 };
 
 const buildAppsArray = () => {
+    apps = [];
     fs.readdirSync('./src/apps/').filter((file) => {
         if (fs.statSync(path.join('./src/apps/', file)).isDirectory()) {
             apps.push(file);
@@ -62,16 +64,40 @@ const buildAndWatchMoonsaultApp = async (app) => {
     await context.watch();
 }
 
-const watchMoonsaultAppIndex = (app) => {
+const watchMoonsaultAppIndexAndConfig = (app) => {
+    
+    console.log(`Copying and watching: ${app}/index.html`);
     buildTools.copy(`./src/apps/${app}/index.html`, `./public/apps/${app}/index.html`);
     fs.watch(`./src/apps/${app}/index.html`, { recursive: true }, (eventType, fileName) => {
         if (eventType === 'change') {
             buildTools.copy(`./src/apps/${app}/index.html`, `./public/apps/${app}/index.html`);
         }
     });
+
+    buildTools.copy(`./src/apps/${app}/routes.js`, `./public/apps/${app}/routes.js`);
+    fs.watch(`./src/apps/${app}/routes.js`, { recursive: true }, (eventType, fileName) => {
+        if (eventType === 'change') {
+            buildTools.copy(`./src/apps/${app}/routes.js`, `./public/apps/${app}/routes.js`);
+        }
+    });
+
+    buildTools.copy(`./src/apps/${app}/localization.js`, `./public/apps/${app}/localization.js`);
+    fs.watch(`./src/apps/${app}/localization.js`, { recursive: true }, (eventType, fileName) => {
+        if (eventType === 'change') {
+            buildTools.copy(`./src/apps/${app}/localization.js`, `./public/apps/${app}/localization.js`);
+        }
+    });
+
+    buildTools.copy(`./src/apps/${app}/config.js`, `./public/apps/${app}/config.js`);
+    fs.watch(`./src/apps/${app}/config.js`, { recursive: true }, (eventType, fileName) => {
+        if (eventType === 'change') {
+            buildTools.copy(`./src/apps/${app}/config.js`, `./public/apps/${app}/config.js`);
+        }
+    });
 };
 
 const watchMoonsaultAppsAssets = (app) => {
+    console.log(`Copying and watching: ${app}/assets/`);
     buildTools.copy(`./src/apps/${app}/assets`, `./public/apps/${app}/assets`);
     fs.watch(`./src/apps/${app}/assets`, { recursive: true }, (eventType, fileName) => {
         if (eventType === 'change') {
@@ -81,6 +107,7 @@ const watchMoonsaultAppsAssets = (app) => {
 };
 
 const buildAndWatchMoonsaultComponents = (app) => {
+    console.log(`Copying and watching: ${app}/components/`);
     fs.readdirSync(`./src/apps/${app}/components`).filter((directory) => {
         if (fs.existsSync(`./src/apps/${app}/components/${directory}/index.html`)) {
             fs.watch(`./src/apps/${app}/components/${directory}/index.html`, { recursive: true }, (eventType, fileName) => {
@@ -101,6 +128,7 @@ const buildAndWatchMoonsaultComponents = (app) => {
 }
 
 const buildAndWatchMoonsaultPages = (app) => {
+    console.log(`Copying and watching: ${app}/pages/`);
     fs.readdirSync(`./src/apps/${app}/pages`).filter((directory) => {
         if (fs.existsSync(`./src/apps/${app}/pages/${directory}/index.html`)) {
             fs.watch(`./src/apps/${app}/pages/${directory}/index.html`, { recursive: true }, (eventType, fileName) => {
@@ -120,20 +148,30 @@ const buildAndWatchMoonsaultPages = (app) => {
     });
 }
 
-const buildAndWatch = () => {
-    // build apps array
-    buildAppsArray();
 
-    // copy over index
-    watchMoonsaultIndex();
+const handleApps = (app) => {
+    if (app === undefined) {
+        for (let app of apps) {
+            // copy app favicon to public
+            buildTools.copy(`./src/apps/${app}/favicon.png`, `./public/apps/${app}/favicon.png`);
 
-    // moonsault assets at framework level
-    watchMoonsaultAssets();
+            // copy services
+            buildTools.copy(`./src/apps/${app}/api`, `./public/apps/${app}/api`);
 
-    // moonsault library
-    buildAndWatchMoonsaultLibrary();
+            // copy app index.html to public
+            watchMoonsaultAppIndexAndConfig(app);
 
-    for (let app of apps) {
+            // watch moonsault app assets
+            watchMoonsaultAppsAssets(app);
+
+            // copy moonsault component and page assets (index.html and index.css)
+            buildAndWatchMoonsaultComponents(app);
+            buildAndWatchMoonsaultPages(app);
+
+            // build moonsault app javascript
+            buildAndWatchMoonsaultApp(app);
+        }
+    } else {
         // copy app favicon to public
         buildTools.copy(`./src/apps/${app}/favicon.png`, `./public/apps/${app}/favicon.png`);
 
@@ -141,7 +179,7 @@ const buildAndWatch = () => {
         buildTools.copy(`./src/apps/${app}/api`, `./public/apps/${app}/api`);
 
         // copy app index.html to public
-        watchMoonsaultAppIndex(app);
+        watchMoonsaultAppIndexAndConfig(app);
 
         // watch moonsault app assets
         watchMoonsaultAppsAssets(app);
@@ -153,6 +191,45 @@ const buildAndWatch = () => {
         // build moonsault app javascript
         buildAndWatchMoonsaultApp(app);
     }
+
+}
+let isChecking = false;
+const checkForDone = () => {
+    isChecking = true;
+    const interval = setInterval(async () => {
+        const request = await fetch('http://localhost:8080/create/api/apps/copying');
+        const response = await request.json();
+        console.log(`Currently copying: ${response}`);
+        if (response === false) {
+            clearInterval(interval);
+            buildAppsArray();
+            handleApps(apps[0]);
+            console.log(apps);
+            console.log('APPS DIRECTORY WRITTEN TO!');
+            isChecking = false;
+        }
+    }, 1000);
+}
+const buildAndWatch = () => {
+    fs.watch(`./src/apps/`, { recursive: true }, (eventType, fileName) => {
+        if (isChecking === false) {
+            checkForDone();
+        }
+    });
+
+    // copy over index
+    watchMoonsaultIndex();
+    
+    // build apps array
+    buildAppsArray();
+    
+    // moonsault assets at framework level
+    watchMoonsaultAssets();
+    
+    // moonsault library
+    buildAndWatchMoonsaultLibrary();
+
+    handleApps();
 
     console.log('Build complete and watching for changes.');
 }
