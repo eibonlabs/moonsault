@@ -1,0 +1,27 @@
+{
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc","closure"]
+    },
+    "source": {
+        "include": [ "build", "create", "src/lib"],
+        "exclude": [ "node_modules", "create/Template", "apps/TestApp" ],
+        "includePattern": ".+\\.js(doc|x)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "plugins": [],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "default": {
+            "includeDate": false,
+            "outputSourceFiles": true
+        }
+    },
+    "opts": {
+        "template": "templates/default",
+        "encoding": "utf8", 
+        "destination": "./docs/docs/", 
+        "recurse": true  
+    }
+}

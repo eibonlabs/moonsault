@@ -1,3 +1,7 @@
+/**
+ * @module Create-services-pages
+ */
+
 const fsExtra = require('fs-extra'),
     fs = require('fs'),
     path = require('path'),
@@ -8,7 +12,7 @@ const fsExtra = require('fs-extra'),
 let done = false;
 
 const writeFile = (dest, asset, data, name, response) => {
-    fsExtra.mkdir(dest, function (err) {
+    fsExtra.mkdir(dest, function () {
         fsExtra.writeFile(`${dest}${asset}`, data, function (err) {
             if (err) {
                 const model = {

@@ -1,6 +1,6 @@
 
-import { startRouter, buildRoute, setURLParam, deleteURLParam } from './router.js';
-import { buildTemplateNodes, buildStyleNodes, loadScript } from './parser.js';
+import { buildRoute, deleteURLParam, setURLParam, startRouter } from './router.js';
+import { loadScript, buildStyleNodes, buildTemplateNodes } from './parser.js';
 import { generateRandomValue } from './utils.js';
 
 /**
@@ -76,6 +76,13 @@ const setComponentNameSpace = (componentName, component) => {
     }
 }
 
+/**
+ * @description Builds a component with the specified template, style, and component instance.
+ * @param {string} componentName - The name of the component to build.
+ * @param {string|HTMLElement} template - The template string or element to use.
+ * @param {string|Object} style - The style definition to apply.
+ * @param {object} component - The component instance to register.
+ */
 const buildComponent = (componentName, template, style, component) => {
     buildStyleNodes(style, componentName)
     buildTemplateNodes(template, component);
@@ -110,7 +117,7 @@ const setCurrentAppPath = () => {
         } else {
             moonsault.currentAppPath = window.origin + '/apps/' + moonsault.currentApp + '/';
         }
-    }  
+    }
     if (window.location.href.indexOf('apps') > -1) {
         if (window.location.href.indexOf('/#/') > -1) {
             moonsault.currentAppPath = `${window.location.href.split('/#/')[0]}/`;
@@ -141,19 +148,23 @@ const setConfig = (config) => {
     moonsault.config = config;
 };
 
-
+/**
+ * @function checkElectron
+ * @description Detects whether the current environment is Electron by checking the user agent.
+ * @returns {void}
+ */
 const checkElectron = () => {
     if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
         moonsault.electron = true;
     }
 }
+
 /**
  * @function setConfig
  * @description sets up the application
  * @param appSettings {object} - passed in from the application's index.js file. sets the initial configuraitgon file, localization, default template, and routes.
  */
 const setupApp = (appSettings) => {
-
     setConfig(appSettings.config);
     setLocalization(appSettings.localization);
     buildTemplateNodes(appSettings.layout, document.querySelector('body'));
@@ -161,6 +172,11 @@ const setupApp = (appSettings) => {
 
 };
 
+/**
+ * @function setAppStyle
+ * @description Injects the application's CSS stylesheet link into the document head.
+ * @returns {void}
+ */
 const setAppStyle = () => {
     const style = document.createElement('link');
     style.setAttribute('rel', 'stylesheet');
@@ -169,7 +185,11 @@ const setAppStyle = () => {
     document.querySelector('head').appendChild(style);
 }
 
-const start = (() => {
+/**
+ * @description Initializes the moonsault application by detecting the Electron environment, setting up the current app, language, styling, and routing.
+ * @returns {void}
+ */
+(() => {
     checkElectron();
     if (document.querySelector('body').getAttribute('data-app') !== null) {
         setCurrentApp();

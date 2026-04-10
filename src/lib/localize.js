@@ -1,18 +1,35 @@
 
 /**
- * @description Localizes text by looking at the data-localize attribute of an element and then finding a corresponding key in moonsault.localize
+ * Localizes text by evaluating `data-localize` attributes and retrieving
+ * corresponding translations from `moonsault.localization` based on the
+ * current `moonsault.language`.
+ *
  * @function localize
- * @param element {HTMLElement} The element to evaluate
+ * @param {HTMLElement} element - The root element to search for localized strings.
+ * @returns {HTMLElement} The same element, after updating its descendant
+ *          text nodes.
  */
 const localize = (element) => {
-    const elements = element.querySelectorAll('[data-localize]');
+    console.log(element)
+    if (!(element instanceof HTMLElement)) {
+        throw new TypeError('element must be an HTMLElement');
+    }
 
-    for (let singleElement of elements) {
-        if (moonsault.localization[moonsault.language]) {
-            singleElement.textContent = moonsault.localization[moonsault.language][singleElement.getAttribute('data-localize')];
-        } else {
-            console.error(`Error with localization. Language ${moonsault.language} does not exist.`);
-        }
+    const localization = moonsault.localization;
+    const language = moonsault.language;
+
+    if (!localization || !language) {
+        console.warn('Localization or language not set; skipping translation.');
+        return element;
+    }
+
+    const nodes = element.querySelectorAll('[data-localize]');
+
+    for (const el of nodes) {
+        const key = el.getAttribute('data-localize');
+        if (!key) continue;
+        const translation = localization[language][key];
+        el.textContent = translation !== undefined ? translation : el.textContent;
     }
 
     return element;

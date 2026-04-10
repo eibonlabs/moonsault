@@ -27,7 +27,7 @@ customElements.define(componentName, class extends HTMLElement {
 
         const thisComponent = this;
 
-        this.querySelector('.set-data').addEventListener('click', (e) => {
+        this.querySelector('.set-data').addEventListener('click', () => {
             // set the 'data-current-time' prop to the current time.
             thisComponent.setAttribute('data-current-time', Date.now());
         })

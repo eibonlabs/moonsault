@@ -92,7 +92,7 @@ const setURLParam = (param, value) => {
     moonsault.urlParams.params[param] = value;
 };
 
-const deleteURLParam = (param, value) => {
+const deleteURLParam = (param) => {
     if (param !== undefined) {
         delete moonsault.urlParams.params[param];
     } else {

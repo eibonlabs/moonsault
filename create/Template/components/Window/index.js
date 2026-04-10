@@ -139,7 +139,7 @@ customElements.define(componentName, class extends HTMLElement {
     }
 
     #setMaximize() {
-        this.querySelector('.window-maximize').addEventListener('click', (e) => {
+        this.querySelector('.window-maximize').addEventListener('click', () => {
             this.maxmize();
         });
     }
@@ -185,7 +185,7 @@ customElements.define(componentName, class extends HTMLElement {
     }
 
     #setMinimize() {
-        this.querySelector('.window-minimize').addEventListener('click', (e) => {
+        this.querySelector('.window-minimize').addEventListener('click', () => {
             this.minimize();
         });
     }
@@ -212,12 +212,12 @@ customElements.define(componentName, class extends HTMLElement {
     }
 
     #setClose() {
-        this.querySelector('.window-close').addEventListener('click', (e) => {
+        this.querySelector('.window-close').addEventListener('click', () => {
             this.close();
         });
     }
 
-    #windowInteractionEnd = (e) => {
+    #windowInteractionEnd = () => {
         this.#model.dragging = false;
         this.#model.width = this.offsetWidth + 'px';
         this.#model.height = this.offsetHeight + 'px';

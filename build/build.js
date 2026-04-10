@@ -1,199 +1,190 @@
+/**
+ * @module Build
+ */
+
 const fs = require('fs');
 const path = require('path');
 
 const esbuild = require('esbuild');
-
-const buildTools = require('./build-tools.js');
-const { clearInterval } = require('timers');
+const  buildTools = require('./build-tools.js');
+const config = require('./build-config.js');
 
 // copy favicon to public
-buildTools.copy('./src/favicon.png', './public/favicon.png');
+console.log(buildTools)
+buildTools.copy(config.SRC_DIR + '/favicon.png', config.PUBLIC_DIR + '/favicon.png');
 
-// define apps array
-let apps = [];
+/**
+ * Builds the core Moonsault library.
+ * 
+ * Uses esbuild to bundle, minify and generate source maps for
+ * `src/lib/moonsault.js`.  The resulting file is emitted to
+ * `public/lib/moonsault.js` and the build context is put into watch mode so
+ * that changes to any source file automatically trigger a rebuild.
+ *
 
-// build the moonsault library and copy to public
+ * @async
+ * @returns {Promise<void>}
+ */
 const buildAndWatchMoonsaultLibrary = async () => {
     const libContext = await esbuild.context({
         bundle: true,
         minify: true,
         sourcemap: true,
-        entryPoints: [`./src/lib/moonsault.js`],
-        outfile: `./public/lib/moonsault.js`
+        entryPoints: [`${config.SRC_DIR}/lib/moonsault.js`],
+        outfile: `${config.PUBLIC_DIR}/lib/moonsault.js`,
     });
     await libContext.watch();
 };
 
+/**
+ * Copies the root `index.html` to the public directory and watches it
+ * for changes.  The file is copied on startup and whenever the source
+ * file emits a `change` event.
+ *
+ * @returns {void}
+ */
 const watchMoonsaultIndex = () => {
-    buildTools.copy('./src/index.html', './public/index.html');
-    fs.watch(`./src/index.html`, { recursive: true }, (eventType, fileName) => {
-        if (eventType === 'change') {
-            buildTools.copy(`./src/index.html`, `./public/index.html`);
-        }
-    });
+    buildTools.watchAndCopyFile(`${config.SRC_DIR}/index.html`, `${config.PUBLIC_DIR}/index.html`);
 };
 
+/**
+ * Copies the entire `src/assets` directory to `public/assets` and watches
+ * it for changes.  A debounced copy is performed on each change event.
+ *
+ * @returns {void}
+ */
 const watchMoonsaultAssets = () => {
-    buildTools.copy('./src/assets', './public/assets');
-    fs.watch(`./src/assets`, { recursive: true }, (eventType, fileName) => {
-        if (eventType === 'change') {
-            buildTools.copy(`./src/assets/${fileName}`, `./public/assets/${fileName}`);
-        }
-    });
+    buildTools.watchAndCopyDir(`${config.SRC_DIR}/assets`, `${config.PUBLIC_DIR}/assets`);
 };
 
+/**
+ * Returns an array of application names found under `src/apps`.
+ *
+ * @returns {string[]}
+ */
 const buildAppsArray = () => {
-    apps = [];
-    fs.readdirSync('./src/apps/').filter((file) => {
-        if (fs.statSync(path.join('./src/apps/', file)).isDirectory()) {
-            apps.push(file);
-        }
-        return true;
-    });
-}
+    return fs.readdirSync(config.APPS_SRC)
+        .filter((f) => fs.statSync(path.join('./src/apps/', f)).isDirectory());
+};
 
+/**
+ * Builds the JavaScript entry point for a single app.
+ * Uses esbuild to bundle, minify and generate source maps for
+ * `src/apps/${app}/app.js`.  The output is written to
+ * `public/apps/${app}/app.js` and the build context remains in watch mode.
+ *
+ * @async
+ * @param {string} app - Application name.
+ * @returns {Promise<void>}
+ */
 const buildAndWatchMoonsaultApp = async (app) => {
-    let context = await esbuild.context({
+    const ctx = await esbuild.context({
         bundle: true,
         minify: true,
         sourcemap: true,
-        entryPoints: [`./src/apps/${app}/app.js`],
-        outfile: `./public/apps/${app}/app.js`
+        entryPoints: [`${config.APPS_SRC}/${app}/app.js`],
+        outfile: `${config.APPS_PUBLIC}/${app}/app.js`,
     });
+    await ctx.watch();
+};
 
-    await context.watch();
-}
+/**
+ * Copies the standard per‑app files (index.html, routes.js,
+ * localization.js, config.js) to the public directory and watches
+ * each file for changes.
+ *
+ * @param {string} app - Application name.
+ * @returns {void}
+ */
+const copyAndWatchAppFiles = (app) => {
+    const baseSrc = `./src/apps/${app}`;
+    const baseDest = `./public/apps/${app}`;
+    ['index.html', 'routes.js', 'localization.js', 'config.js'].forEach((file) => {
+        buildTools.watchAndCopyFile(path.join(baseSrc, file), path.join(baseDest, file));
+    });
+};
 
-const watchMoonsaultAppIndexAndConfig = (app) => {
-    
-    console.log(`Copying and watching: ${app}/index.html`);
-    buildTools.copy(`./src/apps/${app}/index.html`, `./public/apps/${app}/index.html`);
-    fs.watch(`./src/apps/${app}/index.html`, { recursive: true }, (eventType, fileName) => {
-        if (eventType === 'change') {
-            buildTools.copy(`./src/apps/${app}/index.html`, `./public/apps/${app}/index.html`);
+// Copy and watch app assets.
+/**
+ * Copies the assets directory for a single app and watches it for changes.
+ * The source is `src/apps/${app}/assets` and the destination is
+ * `public/apps/${app}/assets`.  The copy operation runs once on startup and
+ * thereafter a debounced watcher keeps the destination in sync.
+ *
+ * @param {string} app - Application name.
+ * @returns {void}
+ */
+const copyAndWatchAppAssets = (app) => {
+    const src = `./src/apps/${app}/assets`;
+    const dest = `./public/apps/${app}/assets`;
+    buildTools.watchAndCopyDir(src, dest);
+};
+
+// Watch components and pages.
+/**
+ * Watches and copies component or page directories for a given app.
+ * For each sub‑directory under `src/apps/${app}/${type}` the function checks
+ * for an `index.html` and/or `index.css`.  When either file changes it is
+ * copied to the corresponding location in `public/apps/${app}/${type}`.
+ *
+ * @param {string} app - Application name.
+ * @param {'components'|'pages'} type - Either 'components' or 'pages'.
+ * @returns {void}
+ */
+const watchComponentsOrPages = (app, type) => {
+    const srcRoot = `./src/apps/${app}/${type}`;
+    const destRoot = `./public/apps/${app}/${type}`;
+    fs.readdirSync(srcRoot).forEach((dir) => {
+        const srcDir = path.join(srcRoot, dir);
+        const destDir = path.join(destRoot, dir);
+        if (fs.existsSync(path.join(srcDir, 'index.html'))) {
+            buildTools.watchAndCopyFile(path.join(srcDir, 'index.html'), path.join(destDir, 'index.html'));
         }
-    });
-
-    buildTools.copy(`./src/apps/${app}/routes.js`, `./public/apps/${app}/routes.js`);
-    fs.watch(`./src/apps/${app}/routes.js`, { recursive: true }, (eventType, fileName) => {
-        if (eventType === 'change') {
-            buildTools.copy(`./src/apps/${app}/routes.js`, `./public/apps/${app}/routes.js`);
-        }
-    });
-
-    buildTools.copy(`./src/apps/${app}/localization.js`, `./public/apps/${app}/localization.js`);
-    fs.watch(`./src/apps/${app}/localization.js`, { recursive: true }, (eventType, fileName) => {
-        if (eventType === 'change') {
-            buildTools.copy(`./src/apps/${app}/localization.js`, `./public/apps/${app}/localization.js`);
-        }
-    });
-
-    buildTools.copy(`./src/apps/${app}/config.js`, `./public/apps/${app}/config.js`);
-    fs.watch(`./src/apps/${app}/config.js`, { recursive: true }, (eventType, fileName) => {
-        if (eventType === 'change') {
-            buildTools.copy(`./src/apps/${app}/config.js`, `./public/apps/${app}/config.js`);
+        if (fs.existsSync(path.join(srcDir, 'index.css'))) {
+            buildTools.watchAndCopyFile(path.join(srcDir, 'index.css'), path.join(destDir, 'index.css'));
         }
     });
 };
 
-const watchMoonsaultAppsAssets = (app) => {
-    console.log(`Copying and watching: ${app}/assets/`);
-    buildTools.copy(`./src/apps/${app}/assets`, `./public/apps/${app}/assets`);
-    fs.watch(`./src/apps/${app}/assets`, { recursive: true }, (eventType, fileName) => {
-        if (eventType === 'change') {
-            buildTools.copy(`./src/apps/${app}/assets/${fileName}`, `./public/apps/${app}/assets/${fileName}`);
-        }
-    });
-};
-
-const buildAndWatchMoonsaultComponents = (app) => {
-    console.log(`Copying and watching: ${app}/components/`);
-    fs.readdirSync(`./src/apps/${app}/components`).filter((directory) => {
-        if (fs.existsSync(`./src/apps/${app}/components/${directory}/index.html`)) {
-            fs.watch(`./src/apps/${app}/components/${directory}/index.html`, { recursive: true }, (eventType, fileName) => {
-                if (eventType === 'change') {
-                    buildTools.copy(`./src/apps/${app}/components/${directory}/index.html`, `./public/apps/${app}/components/${directory}/index.html`);
-                }
-            });
-        }
-
-        if (fs.existsSync(`./src/apps/${app}/components/${directory}/index.css`)) {
-            fs.watch(`./src/apps/${app}/components/${directory}/index.css`, { recursive: true }, (eventType, fileName) => {
-                if (eventType === 'change') {
-                    buildTools.copy(`./src/apps/${app}/components/${directory}/index.css`, `./public/apps/${app}/components/${directory}/index.css`);
-                }
-            });
-        }
-    });
-}
-
-const buildAndWatchMoonsaultPages = (app) => {
-    console.log(`Copying and watching: ${app}/pages/`);
-    fs.readdirSync(`./src/apps/${app}/pages`).filter((directory) => {
-        if (fs.existsSync(`./src/apps/${app}/pages/${directory}/index.html`)) {
-            fs.watch(`./src/apps/${app}/pages/${directory}/index.html`, { recursive: true }, (eventType, fileName) => {
-                if (eventType === 'change') {
-                    buildTools.copy(`./src/apps/${app}/pages/${directory}/index.html`, `./public/apps/${app}/pages/${directory}/index.html`);
-                }
-            });
-        }
-
-        if (fs.existsSync(`./src/apps/${app}/pages/${directory}/index.css`)) {
-            fs.watch(`./src/apps/${app}/pages/${directory}/index.css`, { recursive: true }, (eventType, fileName) => {
-                if (eventType === 'change') {
-                    buildTools.copy(`./src/apps/${app}/pages/${directory}/index.css`, `./public/apps/${app}/pages/${directory}/index.css`);
-                }
-            });
-        }
-    });
-}
-
-
-const handleApps = (app) => {
-    if (app === undefined) {
-        for (let app of apps) {
-            // copy app favicon to public
-            buildTools.copy(`./src/apps/${app}/favicon.png`, `./public/apps/${app}/favicon.png`);
-
-            // copy services
-            buildTools.copy(`./src/apps/${app}/api`, `./public/apps/${app}/api`);
-
-            // copy app index.html to public
-            watchMoonsaultAppIndexAndConfig(app);
-
-            // watch moonsault app assets
-            watchMoonsaultAppsAssets(app);
-
-            // copy moonsault component and page assets (index.html and index.css)
-            buildAndWatchMoonsaultComponents(app);
-            buildAndWatchMoonsaultPages(app);
-
-            // build moonsault app javascript
-            buildAndWatchMoonsaultApp(app);
-        }
-    } else {
-        // copy app favicon to public
-        buildTools.copy(`./src/apps/${app}/favicon.png`, `./public/apps/${app}/favicon.png`);
-
-        // copy services
+// Handle all apps.
+/**
+ * Processes all applications: copies favicons, services, common files,
+ * assets, components/pages and starts the JavaScript bundler for each.
+ *
+ * @param {string[]} apps - Array of application names.
+ * @returns {void}
+ */
+const handleApps = (apps) => {
+    apps.forEach((app) => {
+        // favicon
+        buildTools.copy(`${config.APPS_SRC}/${app}/favicon.png`, `${config.APPS_PUBLIC}/${app}/favicon.png`);
+        // services
         buildTools.copy(`./src/apps/${app}/api`, `./public/apps/${app}/api`);
-
-        // copy app index.html to public
-        watchMoonsaultAppIndexAndConfig(app);
-
-        // watch moonsault app assets
-        watchMoonsaultAppsAssets(app);
-
-        // copy moonsault component and page assets (index.html and index.css)
-        buildAndWatchMoonsaultComponents(app);
-        buildAndWatchMoonsaultPages(app);
-
-        // build moonsault app javascript
+        // common files
+        copyAndWatchAppFiles(app);
+        // assets
+        copyAndWatchAppAssets(app);
+        // components & pages
+        watchComponentsOrPages(app, 'components');
+        watchComponentsOrPages(app, 'pages');
+        // app JS
         buildAndWatchMoonsaultApp(app);
-    }
+    });
+};
 
-}
+// --- Watching for new apps -------------------------------------------------
 let isChecking = false;
+/**
+ * Periodically checks the local API to determine when the
+ * asynchronous copy of application directories has finished.
+ *
+ * The function sets an interval that polls
+ * `http://localhost:8080/create/api/apps/copying` every second.
+ * When the endpoint returns `false`, it clears the interval,
+ * rebuilds the app list and processes all apps.
+ *
+ * @returns {void}
+ */
 const checkForDone = () => {
     isChecking = true;
     const interval = setInterval(async () => {
@@ -202,36 +193,45 @@ const checkForDone = () => {
         console.log(`Currently copying: ${response}`);
         if (response === false) {
             clearInterval(interval);
-            buildAppsArray();
-            handleApps(apps[0]);
+            const apps = buildAppsArray();
+            handleApps(apps);
             console.log(apps);
             console.log('APPS DIRECTORY WRITTEN TO!');
             isChecking = false;
         }
     }, 1000);
-}
+};
+
+/**
+ * Starts the development build process and watches for changes.
+ * 
+ * This function performs several tasks:
+ * 1. Sets up a recursive file watcher on the `./src/apps/` directory to detect
+ *    new or moved application directories. When a change is detected it polls an
+ *    API endpoint (`/create/api/apps/copying`) to determine when the copy
+ *    operation has finished, then rebuilds all apps.
+ * 2. Watches the global Moonsault index and assets for changes.
+ * 3. Builds the shared Moonsault library once at startup.
+ * 4. Handles existing applications by copying assets, components, pages and
+ *    initializing their individual watch/build cycles.
+ * 
+ * The function is idempotent – calling it multiple times will simply
+ * re‑establish watchers without duplicating work.
+ * 
+ * @returns {void}
+ */
 const buildAndWatch = () => {
-    fs.watch(`./src/apps/`, { recursive: true }, (eventType, fileName) => {
-        if (isChecking === false) {
-            checkForDone();
-        }
+    fs.watch('./src/apps/', { recursive: true }, () => {
+        if (!isChecking) checkForDone();
     });
 
-    // copy over index
     watchMoonsaultIndex();
-    
-    // build apps array
-    buildAppsArray();
-    
-    // moonsault assets at framework level
+    const apps = buildAppsArray();
     watchMoonsaultAssets();
-    
-    // moonsault library
     buildAndWatchMoonsaultLibrary();
-
-    handleApps();
+    handleApps(apps);
 
     console.log('Build complete and watching for changes.');
-}
+};
 
 buildAndWatch();

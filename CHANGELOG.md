@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.3.6
+- refactored build process
+- refactored parts of main lib
+- more JSDocs + JSDoc configuration
+- fixed a bunch of window component issues
+  - uses absolute positioning instead of fixed so you can have the deskop container anywhere on the page
+  - fixed issue with resizing not working
+  - updated window control buttons ui
+  - fixed issue where restore window from minimized if window isn't moved first
+  - added styling for desktop container
+- added a demo page for the window object
+- added examples page
+- added eslint configuration file and dependency
+- added initial tests
+
 ## v1.3.5
 - added moonsault create GUI
 - update command line app to automatically add new pages into routes.js.

@@ -75,19 +75,19 @@ customElements.define(componentName, class extends HTMLElement {
             this.#exampleVars.test3 += 1;
         }, 2500);
 
-        this.querySelector("#increment").addEventListener("click", (e) => {
+        this.querySelector("#increment").addEventListener("click", () => {
             this.increment();
         });
 
-        this.querySelector("#decrement").addEventListener("click", (e) => {
+        this.querySelector("#decrement").addEventListener("click", () => {
             this.decrement();
         });
 
-        this.querySelector("#nestedIncrement").addEventListener("click", (e) => {
+        this.querySelector("#nestedIncrement").addEventListener("click", () => {
             this.nestedIncrement();
         });
 
-        this.querySelector("#nestedDecrement").addEventListener("click", (e) => {
+        this.querySelector("#nestedDecrement").addEventListener("click", () => {
             this.nestedDecrement();
         });
     }

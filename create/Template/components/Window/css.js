@@ -1,9 +1,28 @@
 const css = `
+  .desktop-container {
+    position:relative;
+    width:calc(100vw - 60px);
+    height:calc(100vh - 190px);
+    border:1px solid rgba(50,50,50,1);
+    border-radius:8px;
+    overflow:hidden;
+  }
+
+  .desktop {
+    background-color:rgba(20,20,20,1);
+    display:block;
+    position: absolute;
+    top:0px;
+    right:0px;
+    bottom:0px;
+    left:0px;
+    overflow:hidden;
+  }
+
   c-window {
-    position: fixed;
+    position: absolute;
     display: flex;
     overflow: hidden;
-   
   }
 
   c-window.resizable {
@@ -35,8 +54,8 @@ const css = `
     border-top: 1px solid #590d4f;
     border-left: 1px solid #590d4f;
     border-right: 1px solid #590d4f;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
     display: flex;
     align-items: center;
     background-color: #890c78;
@@ -48,7 +67,7 @@ const css = `
     font-weight: bold;
     margin: 0px;
     width: 100%;
-    padding: 4px 16px;
+    padding: 4px 16px 0px 4px;
     text-overflow: ellipsis;
   }
 
@@ -58,6 +77,20 @@ const css = `
     padding: 4px 6px;
     display: flex;
     gap: 4px;
+  }
+  
+  c-window .window .window-title-bar .window-controls button {
+    margin:0px;
+    padding:0px;
+    width:18px;
+    height:18px;
+    display:flex;
+    align-items:center;
+  }
+
+  c-window .window .window-title-bar .window-controls button svg {
+    width:80%;
+    height:80%;
   }
 
   c-window .window .window-content {
@@ -98,7 +131,7 @@ const css = `
   c-window .window .window-footer .window-footer-message {
     margin: 0px;
     width: 100%;
-    padding: 4px 16px;
+    padding: 4px 16px 0px 4px;
   }
 `;
 
