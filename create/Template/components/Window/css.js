@@ -1,13 +1,4 @@
 const css = `
-  .desktop-container {
-    position:relative;
-    width:calc(100vw - 60px);
-    height:calc(100vh - 190px);
-    border:1px solid rgba(50,50,50,1);
-    border-radius:8px;
-    overflow:hidden;
-  }
-
   .desktop {
     background-color:rgba(20,20,20,1);
     display:block;
