@@ -1,4 +1,3 @@
-/*global require __dirname */
 const path = require('path');
 const fsExtra = require('fs-extra');
 const express = require('express');
@@ -26,6 +25,7 @@ try {
     }
   });
 } catch (err) {
+  console.log(err);
   console.log(`\nYou haven't created an app yet!\n\nRun 'node create' from the command line to create an app.`);
 }
 

@@ -1,39 +1,58 @@
 /**
- * @description Binds data to an element on screen
+ * @description Binds a property on a context object to a DOM element or callback.
  * @function bind
- * @param context {object} The object to bind data to. This could be an existing model, or even the window object
- * @param propName {string} The name of the property on the object we are watching
- * @param initialValue {any} The initial value to set on the model
- * @param elementOrCallback {Object} If an HTML element is passed in, its textContent or value will be set to the current value. If a function is passed in, that function will be called with the current value as a parameter
+ * @param {object} context - The object that holds the data model.
+ * @param {string} propName - Name of the property to bind.
+ * @param {*} initialValue - Initial value to set on the model.
+ * @param {Object|Function} elementOrCallback - Either an element whose
+ *   `value`/`textContent` will be updated, or a function called with the
+ *   current value.
+ * @returns {void}
  */
 const bind = (context, propName, initialValue, elementOrCallback) => {
-    // create the variable, getter and setter
-    Object.defineProperty(context, propName, {
-        set(value) {
-            context[`_${propName}`] = value;
-            if (typeof elementOrCallback === "object") {
-                if (
-                    // HTML element. set its textContent or value
-                    elementOrCallback instanceof HTMLInputElement ||
-                    elementOrCallback instanceof HTMLSelectElement ||
-                    elementOrCallback instanceof HTMLTextAreaElement
-                ) {
-                    elementOrCallback.value = context[`_${propName}`];
-                } else {
-                    elementOrCallback.textContent = context[`_${propName}`];
-                }
-            } else {
-                // callback method. pass in current value
-                elementOrCallback(context[`_${propName}`]);
+    // Argument validation
+    if (!context || typeof context !== 'object') {
+        throw new TypeError('context must be an object');
+    }
+    if (typeof propName !== 'string' || propName.length === 0) {
+        throw new TypeError('propName must be a non-empty string');
+    }
+    if (elementOrCallback == null) {
+        throw new Error('elementOrCallback cannot be null or undefined');
+    }
+
+    // Internal storage key
+    const storageKey = `_${propName}`;
+
+    // Apply the latest value to the element or callback
+    const apply = () => {
+        const value = context[storageKey];
+        if (typeof elementOrCallback === 'object' && elementOrCallback !== null) {
+            // Update DOM element if it has a matching property
+            if ('value' in elementOrCallback && typeof elementOrCallback.value !== 'undefined') {
+                elementOrCallback.value = value;
+            } else if ('textContent' in elementOrCallback && typeof elementOrCallback.textContent !== 'undefined') {
+                elementOrCallback.textContent = value;
             }
-        },
-        get() {
-            return context[`_${propName}`];
+        } else if (typeof elementOrCallback === 'function') {
+            elementOrCallback(value);
         }
+    };
+
+    // Setter that stores the value and triggers UI update
+    Object.defineProperty(context, propName, {
+        enumerable: true,
+        configurable: true,
+        set: (value) => {
+            context[storageKey] = value;
+            apply();
+        },
+        get: () => context[storageKey],
     });
 
-    // set initial value
+    // Initialize with the provided value
     context[propName] = initialValue;
+    apply();
 };
 
 export { bind };

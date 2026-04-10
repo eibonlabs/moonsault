@@ -17,7 +17,7 @@ customElements.define(componentName, class extends HTMLElement {
         console.info('HelloWorld Component Connected');
 
         buildComponent(componentName, html, css, this);
-        this.querySelector('#helloWorldButton').addEventListener('click', (e) => {
+        this.querySelector('#helloWorldButton').addEventListener('click', () => {
             this.helloWorld();
         })
     }

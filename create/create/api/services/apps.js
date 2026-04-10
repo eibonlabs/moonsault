@@ -1,3 +1,7 @@
+/**
+ * @module Create-services-apps
+ */
+
 const fsExtra = require('fs-extra'),
     fs = require('fs'),
     path = require('path'),
@@ -5,8 +9,16 @@ const fsExtra = require('fs-extra'),
     appsDirectory = `${srcDirectory}apps/`,
     templateDirectory = '/create/Template/';
 
+/**
+ * Ensures the destination directory exists and writes data to a file.
+ * Logs an error and exits if writing fails.
+ *
+ * @param {string} dest - Destination directory path.
+ * @param {string} asset - File name to write (e.g., 'index.js').
+ * @param {string|Buffer} data - File contents.
+ */
 const writeFile = (dest, asset, data) => {
-    fsExtra.mkdir(dest, function (err) {
+    fsExtra.mkdir(dest, function () {
         fsExtra.writeFile(`${dest}${asset}`, data, function (err) {
             if (err) {
                 console.log('An error occurred when writing');
@@ -19,6 +31,12 @@ const writeFile = (dest, asset, data) => {
 
 let appIsCopying = false;
 
+/**
+ * Updates the application's index.html by replacing placeholder text.
+ * Writes the modified file back to disk.
+ *
+ * @param {string} name - Name of the application.
+ */
 const renameApplicationIndex = (name) => {
     const dest = `${path.resolve()}${appsDirectory}${name}/index.html`;
     fsExtra.readFile(`${dest}`, function (err, data) {
@@ -32,6 +50,12 @@ const renameApplicationIndex = (name) => {
     });
 }
 
+/**
+ * Updates the application's stylesheet by replacing placeholder text.
+ * Writes the modified file back to disk.
+ *
+ * @param {string} name - Name of the application.
+ */
 const remameApplicationStyleSheet = (name) => {
     const dest = `${path.resolve()}${appsDirectory}${name}/assets/css/app.css`;
     fsExtra.readFile(`${dest}`, function (err, data) {
@@ -45,6 +69,15 @@ const remameApplicationStyleSheet = (name) => {
     });
 }
 
+/**
+ * Handles copying and updating of application files after a new app is created.
+ * Renames the index and stylesheet, then sends a success response.
+ *
+ * @param {string} src - Source template directory.
+ * @param {string} dest - Destination application directory.
+ * @param {string} name - Name of the new application.
+ * @param {object} response - Express response object to send JSON.
+ */
 const processAppFiles = (src, dest, name, response) => {
     renameApplicationIndex(name);
     remameApplicationStyleSheet(name);
@@ -53,6 +86,12 @@ const processAppFiles = (src, dest, name, response) => {
 
     let apps = [];
 
+    /**
+     * Retrieves a list of application directories from the specified source path.
+     *
+     * @param {string} appSrc - The absolute or relative path to the applications source directory.
+     * @returns {Array<string>} An array of directory names representing each application found within {@link appSrc}.
+     */
     fsExtra.readdirSync(appSrc).filter((file) => {
         if (fsExtra.statSync(path.join(appSrc, file)).isDirectory()) {
             apps.push(file);
@@ -76,6 +115,15 @@ const processAppFiles = (src, dest, name, response) => {
     appIsCopying = false;
 }
 
+/**
+ * Copies the application template to the destination directory.
+ * After copying, calls `processAppFiles` to finalize setup.
+ *
+ * @param {string} src - Source template directory.
+ * @param {string} dest - Destination application directory.
+ * @param {string} name - Name of the new application.
+ * @param {object} response - Express response object to send JSON.
+ */
 const copyAppFiles = (src, dest, name, response) => {
 
     fsExtra.copy(src, dest, {
@@ -95,6 +143,13 @@ const copyAppFiles = (src, dest, name, response) => {
     });
 };
 
+/**
+ * Sets the specified application as the default.
+ * Updates the root index.html file and returns a status message.
+ *
+ * @param {string} appName - Name of the application to set as default.
+ * @param {object|null} response - Express response object; if provided, JSON is sent.
+ */
 const defaultApp = (appName, response) => {
     const src = `${path.resolve()}${srcDirectory}index.html`;
     fsExtra.readFile(src, function (err, data) {
@@ -142,6 +197,12 @@ const defaultApp = (appName, response) => {
 }
 
 
+/**
+ * Starts the app service by registering all required routes on the Express
+ * application instance.
+ *
+ * @param {object} app - The Express application object.
+ */
 const start = (app) => {
     console.log('attempting to start apps service')
     // get all apps and return array

@@ -187,7 +187,7 @@
     <div id="main-container">
         <div id="left-column">
             <div id="apps-container">
-                
+
                 <label>
                     <h2>Select an App</h2>
                     <select id="apps" name="app-selector"></select>
@@ -217,18 +217,34 @@
     </div>
 
     <script type="text/javascript">
+        /**
+         * Holds the current state of the UI.
+         * @type {{selectedApp: string|null}}
+         */
         let model = {
             selectedApp: null
         };
 
+        /**
+         * Shows the assets panel for components and pages.
+         * Adds the 'show' CSS class to reveal the container.
+         */
         const showAssets = () => {
             document.querySelector('#assets-container').classList.add('show');
         };
 
+        /**
+         * Hides the assets panel when no app is selected.
+         * Removes the 'show' CSS class from the container.
+         */
         const hideAssets = () => {
             document.querySelector('#assets-container').classList.remove('show');
         };
 
+        /**
+         * Updates the UI when an app is selected.
+         * Sets preview, loads components and pages lists, and toggles asset visibility.
+         */
         const updateAppAssets = () => {
             if (model.selectedApp !== null) {
                 setPreview();
@@ -241,10 +257,18 @@
 
         };
 
+        /**
+         * Sets the preview iframe source to the selected app.
+         * Uses `model.selectedApp` as the target path.
+         */
         const setPreview = () => {
             document.querySelector('#preview').setAttribute('src', `http://localhost:8080/apps/${model.selectedApp}`);
         }
 
+        /**
+         * Attaches a change listener to the app dropdown.
+         * Updates `model.selectedApp` and refreshes assets on selection.
+         */
         const selectAppHandler = () => {
             const appsDropdown = document.querySelector('#apps');
             appsDropdown.addEventListener('change', (e) => {
@@ -253,6 +277,10 @@
             });
         };
 
+        /**
+         * Sends a request to mark the currently selected app as default.
+         * Uses the `/create/api/{app}/setDefault` endpoint.
+         */
         const setDefaultApp = async () => {
             const request = await fetch(`/create/api/${model.selectedApp}/setDefault`, {
                 method: "put",
@@ -265,6 +293,10 @@
             alert(response.message);
         };
 
+        /**
+         * Registers click listener on the "Set Selected App as the Default" button.
+         * Calls `setDefaultApp` when triggered.
+         */
         const setDefaultAppHandler = () => {
             const button = document.querySelector('#setDefaultApp');
             button.addEventListener('click', (e) => {
@@ -272,6 +304,12 @@
             });
         }
 
+        /**
+         * Creates a new application via the `/create/api/apps` endpoint.
+         * On success, updates `model.selectedApp` and refreshes the app list.
+         *
+         * @param {string} appName - Name of the application to create.
+         */
         const createApp = async (appName) => {
             const request = await fetch('/create/api/apps', {
                 method: "post",
@@ -291,6 +329,10 @@
             }
         };
 
+        /**
+         * Registers click listener on the "Create a New App" button.
+         * Prompts for an app name and calls `createApp`.
+         */
         const createAppHandler = () => {
             const button = document.querySelector('#createApp');
             button.addEventListener('click', (e) => {
@@ -301,6 +343,10 @@
             });
         };
 
+        /**
+         * Retrieves the list of available applications from `/create/api/apps`.
+         * Populates the dropdown and updates UI state accordingly.
+         */
         const getApps = async () => {
             const request = await fetch('/create/api/apps');
             const response = await request.json();
@@ -314,8 +360,6 @@
                 option.textContent = response[app];
                 appsDropdown.appendChild(option);
             }
-
-
 
             if (appsDropdown.length === 0) {
                 appsDropdown.classList.remove('show');
@@ -333,6 +377,10 @@
             updateAppAssets();
         };
 
+        /**
+         * Retrieves component names for the selected application.
+         * Populates the components list UI element with <li> items.
+         */
         const getComponents = async () => {
             const request = await fetch(`/create/api/${model.selectedApp}/components/`);
             const response = await request.json();
@@ -345,6 +393,12 @@
             }
         };
 
+        /**
+         * Creates a new component via the `/create/api/${model.selectedApp}/components` endpoint.
+         * On success, refreshes the component list.
+         *
+         * @param {string} componentName - Name of the component to create.
+         */
         const createComponent = async (componentName) => {
             const request = await fetch(`/create/api/${model.selectedApp}/components`, {
                 method: "post",
@@ -363,6 +417,10 @@
             }
         };
 
+        /**
+         * Registers click listener on the "Create a New Component" button.
+         * Prompts for component name and calls `createComponent`.
+         */
         const createComponentHandler = () => {
             const button = document.querySelector('#createComponent');
             button.addEventListener('click', (e) => {
@@ -373,6 +431,10 @@
             });
         };
 
+        /**
+         * Fetches page names for the selected app.
+         * Populates the pages list UI element.
+         */
         const getPages = async () => {
             const request = await fetch(`/create/api/${model.selectedApp}/pages/`);
             const response = await request.json();
@@ -385,6 +447,12 @@
             }
         };
 
+        /**
+         * Creates a new page via the `/create/api/${model.selectedApp}/pages` endpoint.
+         * On success, refreshes the page list.
+         *
+         * @param {string} pageName - Name of the page to create.
+         */
         const createPage = async (pageName) => {
             const request = await fetch(`/create/api/${model.selectedApp}/pages`, {
                 method: "post",
@@ -403,6 +471,10 @@
             }
         };
 
+        /**
+         * Registers click listener on the "Create a New Page" button.
+         * Prompts for page name and calls `createPage`.
+         */
         const createPageHandler = () => {
             const button = document.querySelector('#createPage');
             button.addEventListener('click', (e) => {

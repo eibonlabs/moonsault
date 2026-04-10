@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: build/build.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: build/build.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Build
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const esbuild = require('esbuild');
+const  buildTools = require('./build-tools.js');
+const config = require('./build-config.js');
+
+// copy favicon to public
+console.log(buildTools)
+buildTools.copy(config.SRC_DIR + '/favicon.png', config.PUBLIC_DIR + '/favicon.png');
+
+/**
+ * Builds the core Moonsault library.
+ * 
+ * Uses esbuild to bundle, minify and generate source maps for
+ * `src/lib/moonsault.js`.  The resulting file is emitted to
+ * `public/lib/moonsault.js` and the build context is put into watch mode so
+ * that changes to any source file automatically trigger a rebuild.
+ *
+
+ * @async
+ * @returns {Promise&lt;void>}
+ */
+const buildAndWatchMoonsaultLibrary = async () => {
+    const libContext = await esbuild.context({
+        bundle: true,
+        minify: true,
+        sourcemap: true,
+        entryPoints: [`${config.SRC_DIR}/lib/moonsault.js`],
+        outfile: `${config.PUBLIC_DIR}/lib/moonsault.js`,
+    });
+    await libContext.watch();
+};
+
+/**
+ * Copies the root `index.html` to the public directory and watches it
+ * for changes.  The file is copied on startup and whenever the source
+ * file emits a `change` event.
+ *
+ * @returns {void}
+ */
+const watchMoonsaultIndex = () => {
+    buildTools.watchAndCopyFile(`${config.SRC_DIR}/index.html`, `${config.PUBLIC_DIR}/index.html`);
+};
+
+/**
+ * Copies the entire `src/assets` directory to `public/assets` and watches
+ * it for changes.  A debounced copy is performed on each change event.
+ *
+ * @returns {void}
+ */
+const watchMoonsaultAssets = () => {
+    buildTools.watchAndCopyDir(`${config.SRC_DIR}/assets`, `${config.PUBLIC_DIR}/assets`);
+};
+
+/**
+ * Returns an array of application names found under `src/apps`.
+ *
+ * @returns {string[]}
+ */
+const buildAppsArray = () => {
+    return fs.readdirSync(config.APPS_SRC)
+        .filter((f) => fs.statSync(path.join('./src/apps/', f)).isDirectory());
+};
+
+/**
+ * Builds the JavaScript entry point for a single app.
+ * Uses esbuild to bundle, minify and generate source maps for
+ * `src/apps/${app}/app.js`.  The output is written to
+ * `public/apps/${app}/app.js` and the build context remains in watch mode.
+ *
+ * @async
+ * @param {string} app - Application name.
+ * @returns {Promise&lt;void>}
+ */
+const buildAndWatchMoonsaultApp = async (app) => {
+    const ctx = await esbuild.context({
+        bundle: true,
+        minify: true,
+        sourcemap: true,
+        entryPoints: [`${config.APPS_SRC}/${app}/app.js`],
+        outfile: `${config.APPS_PUBLIC}/${app}/app.js`,
+    });
+    await ctx.watch();
+};
+
+/**
+ * Copies the standard per‑app files (index.html, routes.js,
+ * localization.js, config.js) to the public directory and watches
+ * each file for changes.
+ *
+ * @param {string} app - Application name.
+ * @returns {void}
+ */
+const copyAndWatchAppFiles = (app) => {
+    const baseSrc = `./src/apps/${app}`;
+    const baseDest = `./public/apps/${app}`;
+    ['index.html', 'routes.js', 'localization.js', 'config.js'].forEach((file) => {
+        buildTools.watchAndCopyFile(path.join(baseSrc, file), path.join(baseDest, file));
+    });
+};
+
+// Copy and watch app assets.
+/**
+ * Copies the assets directory for a single app and watches it for changes.
+ * The source is `src/apps/${app}/assets` and the destination is
+ * `public/apps/${app}/assets`.  The copy operation runs once on startup and
+ * thereafter a debounced watcher keeps the destination in sync.
+ *
+ * @param {string} app - Application name.
+ * @returns {void}
+ */
+const copyAndWatchAppAssets = (app) => {
+    const src = `./src/apps/${app}/assets`;
+    const dest = `./public/apps/${app}/assets`;
+    buildTools.watchAndCopyDir(src, dest);
+};
+
+// Watch components and pages.
+/**
+ * Watches and copies component or page directories for a given app.
+ * For each sub‑directory under `src/apps/${app}/${type}` the function checks
+ * for an `index.html` and/or `index.css`.  When either file changes it is
+ * copied to the corresponding location in `public/apps/${app}/${type}`.
+ *
+ * @param {string} app - Application name.
+ * @param {'components'|'pages'} type - Either 'components' or 'pages'.
+ * @returns {void}
+ */
+const watchComponentsOrPages = (app, type) => {
+    const srcRoot = `./src/apps/${app}/${type}`;
+    const destRoot = `./public/apps/${app}/${type}`;
+    fs.readdirSync(srcRoot).forEach((dir) => {
+        const srcDir = path.join(srcRoot, dir);
+        const destDir = path.join(destRoot, dir);
+        if (fs.existsSync(path.join(srcDir, 'index.html'))) {
+            buildTools.watchAndCopyFile(path.join(srcDir, 'index.html'), path.join(destDir, 'index.html'));
+        }
+        if (fs.existsSync(path.join(srcDir, 'index.css'))) {
+            buildTools.watchAndCopyFile(path.join(srcDir, 'index.css'), path.join(destDir, 'index.css'));
+        }
+    });
+};
+
+// Handle all apps.
+/**
+ * Processes all applications: copies favicons, services, common files,
+ * assets, components/pages and starts the JavaScript bundler for each.
+ *
+ * @param {string[]} apps - Array of application names.
+ * @returns {void}
+ */
+const handleApps = (apps) => {
+    apps.forEach((app) => {
+        // favicon
+        buildTools.copy(`${config.APPS_SRC}/${app}/favicon.png`, `${config.APPS_PUBLIC}/${app}/favicon.png`);
+        // services
+        buildTools.copy(`./src/apps/${app}/api`, `./public/apps/${app}/api`);
+        // common files
+        copyAndWatchAppFiles(app);
+        // assets
+        copyAndWatchAppAssets(app);
+        // components &amp; pages
+        watchComponentsOrPages(app, 'components');
+        watchComponentsOrPages(app, 'pages');
+        // app JS
+        buildAndWatchMoonsaultApp(app);
+    });
+};
+
+// --- Watching for new apps -------------------------------------------------
+let isChecking = false;
+/**
+ * Periodically checks the local API to determine when the
+ * asynchronous copy of application directories has finished.
+ *
+ * The function sets an interval that polls
+ * `http://localhost:8080/create/api/apps/copying` every second.
+ * When the endpoint returns `false`, it clears the interval,
+ * rebuilds the app list and processes all apps.
+ *
+ * @returns {void}
+ */
+const checkForDone = () => {
+    isChecking = true;
+    const interval = setInterval(async () => {
+        const request = await fetch('http://localhost:8080/create/api/apps/copying');
+        const response = await request.json();
+        console.log(`Currently copying: ${response}`);
+        if (response === false) {
+            clearInterval(interval);
+            const apps = buildAppsArray();
+            handleApps(apps);
+            console.log(apps);
+            console.log('APPS DIRECTORY WRITTEN TO!');
+            isChecking = false;
+        }
+    }, 1000);
+};
+
+/**
+ * Starts the development build process and watches for changes.
+ * 
+ * This function performs several tasks:
+ * 1. Sets up a recursive file watcher on the `./src/apps/` directory to detect
+ *    new or moved application directories. When a change is detected it polls an
+ *    API endpoint (`/create/api/apps/copying`) to determine when the copy
+ *    operation has finished, then rebuilds all apps.
+ * 2. Watches the global Moonsault index and assets for changes.
+ * 3. Builds the shared Moonsault library once at startup.
+ * 4. Handles existing applications by copying assets, components, pages and
+ *    initializing their individual watch/build cycles.
+ * 
+ * The function is idempotent – calling it multiple times will simply
+ * re‑establish watchers without duplicating work.
+ * 
+ * @returns {void}
+ */
+const buildAndWatch = () => {
+    fs.watch('./src/apps/', { recursive: true }, () => {
+        if (!isChecking) checkForDone();
+    });
+
+    watchMoonsaultIndex();
+    const apps = buildAppsArray();
+    watchMoonsaultAssets();
+    buildAndWatchMoonsaultLibrary();
+    handleApps(apps);
+
+    console.log('Build complete and watching for changes.');
+};
+
+buildAndWatch();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Build.html">Build</a></li><li><a href="module-Build-config.html">Build-config</a></li><li><a href="module-Build-tools.html">Build-tools</a></li><li><a href="module-Create-services.html">Create-services</a></li><li><a href="module-Create-services-apps.html">Create-services-apps</a></li><li><a href="module-Create-services-compoenents.html">Create-services-compoenents</a></li><li><a href="module-Create-services-pages.html">Create-services-pages</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bind">bind</a></li><li><a href="global.html#buildComponent">buildComponent</a></li><li><a href="global.html#buildStyleNodes">buildStyleNodes</a></li><li><a href="global.html#buildTemplateNodes">buildTemplateNodes</a></li><li><a href="global.html#checkElectron">checkElectron</a></li><li><a href="global.html#generateRandomValue">generateRandomValue</a></li><li><a href="global.html#loadScript">loadScript</a></li><li><a href="global.html#localize">localize</a></li><li><a href="global.html#setAppStyle">setAppStyle</a></li><li><a href="global.html#setComponentNameSpace">setComponentNameSpace</a></li><li><a href="global.html#setConfig">setConfig</a></li><li><a href="global.html#setCurrentApp">setCurrentApp</a></li><li><a href="global.html#setCurrentAppPath">setCurrentAppPath</a></li><li><a href="global.html#setLanguage">setLanguage</a></li><li><a href="global.html#setLocalization">setLocalization</a></li><li><a href="global.html#setRoutes">setRoutes</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

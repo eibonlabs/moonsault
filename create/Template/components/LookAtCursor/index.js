@@ -44,7 +44,7 @@ customElements.define(componentName, class extends HTMLElement {
         }
 
         // remove transition used when leaving the parent container
-        parentContainer.addEventListener('mouseenter', (e) => {
+        parentContainer.addEventListener('mouseenter', () => {
             thisComponent.classList.remove('mouseleave');
         });
 
@@ -58,7 +58,7 @@ customElements.define(componentName, class extends HTMLElement {
             });
         });
 
-        parentContainer.addEventListener('mouseleave', (e) => {
+        parentContainer.addEventListener('mouseleave', () => {
             // add a transition class to animate the positioning back to the default
             thisComponent.classList.add('mouseleave');
 

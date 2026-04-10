@@ -5,6 +5,7 @@ const css = `
     overflow: visible; 
     transition-property: all;
     transition-duration: 0.05s;
+    width:300px;
   }
   
   c-look-at-cursor.mouseleave {

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: create/create/api/services/pages.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: create/create/api/services/pages.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Create-services-pages
+ */
+
+const fsExtra = require('fs-extra'),
+    fs = require('fs'),
+    path = require('path'),
+    srcDirectory = '/src/',
+    appsDirectory = `${srcDirectory}apps/`,
+    templateDirectory = '/create/Template/';
+
+let done = false;
+
+const writeFile = (dest, asset, data, name, response) => {
+    fsExtra.mkdir(dest, function () {
+        fsExtra.writeFile(`${dest}${asset}`, data, function (err) {
+            if (err) {
+                const model = {
+                    message: `An error occurred when writing the file.`,
+                    status: 400
+                }
+                response.send(model);
+            }
+
+            if (!err &amp;&amp; done === false) {
+                done = true;
+                const model = {
+                    message: `The ${name} page was successfully created!`,
+                    status: 200
+                }
+                response.send(model);
+            }
+        });
+    });
+}
+
+const capitalizeFirstLetter = (string) => {
+    if (string) {
+        return string[0].toUpperCase() + string.slice(1);
+    } else {
+        return string;
+    }
+}
+
+const processPageFiles = (src, dest, name, response) => {
+    const assets = [
+        'index.js',
+        'html.js',
+        'css.js'
+    ];
+
+    for (let asset of assets) {
+        fsExtra.readFile(`${src}${asset}`, function (err, data) {
+            if (err) {
+                throw err
+            } else {
+                data = data.toString();
+                // replace component name
+                data = data.replaceAll('p-_TEMPLATE_', `p-${name.toLowerCase()}`);
+                data = data.replaceAll('_TEMPLATE_', capitalizeFirstLetter(name));
+                writeFile(dest, asset, data, name, response);
+            }
+        });
+    }
+}
+
+const addRoute = (src, dest, name, request, response) => {
+    console.log('UPDATING ROUTE')
+    fsExtra.readFile(`${src}`, function (err, data) {
+        if (err) {
+            console.log('ERROR WITH READING ROUTE FILE');
+            throw err
+        } else {
+            data = data.toString();
+            const importInjectionPoint = data.lastIndexOf('.js');
+            const importString = `import './pages/${name}/index`;
+
+            // add import
+            data = data.slice(0, importInjectionPoint) + `.js';\n${importString}` + data.slice(importInjectionPoint);
+
+            // add route
+            const routeInjectionPoint = data.lastIndexOf("'");
+            const routeString = `'#/${name.toLowerCase()}': 'p-${name.toLowerCase()}`;
+            data = data.slice(0, routeInjectionPoint + 1) + `,\n    ${routeString}` + data.slice(routeInjectionPoint);
+
+            writeFile(`${path.resolve()}${appsDirectory}${request.appName}/`, `routes.js`, data, name, response);
+            console.log(data);
+        }
+    });
+};
+
+const start = (app) => {
+    console.log('attempting to start pages service');
+
+    app.param('appName', function (request, response, next, value) {
+        request.appName = value;
+        next();
+    });
+
+    // set up endpoints for each app to list out app pages
+
+    app.get(`/create/api/:appName/pages/`, (request, response) => {
+        const src = `${path.resolve()}${appsDirectory}/${request.appName}/pages/`;
+
+        let pages = [];
+
+        fsExtra.readdirSync(src).filter((file) => {
+            if (fsExtra.statSync(path.join(src, file)).isDirectory()) {
+                pages.push(file);
+            }
+        });
+
+        response.send(pages);
+    });
+
+    app.post(`/create/api/:appName/pages`, (request, response) => {
+        console.log(request.body.name);
+
+        const name = request.body.name.toString().trim().replaceAll(' ', '');
+
+        const src = `${path.resolve()}${templateDirectory}pages/_TEMPLATE_/`;
+        const dest = `${path.resolve()}${appsDirectory}${request.appName}/pages/${capitalizeFirstLetter(name)}/`;
+
+        if (name !== '') {
+            if (!fs.existsSync(dest)) {
+                processPageFiles(src, dest, name, response);
+                addRoute(`${path.resolve()}${appsDirectory}${request.appName}/routes.js`, `${path.resolve()}${appsDirectory}${request.appName}/routes.js`, name, request, response);
+            } else {
+                const model = {
+                    message: `The ${name} page already exists.`,
+                    status: 400
+                }
+                response.send(model);
+            }
+        }
+    });
+};
+
+module.exports = { start };</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Build.html">Build</a></li><li><a href="module-Build-config.html">Build-config</a></li><li><a href="module-Build-tools.html">Build-tools</a></li><li><a href="module-Create-services.html">Create-services</a></li><li><a href="module-Create-services-apps.html">Create-services-apps</a></li><li><a href="module-Create-services-compoenents.html">Create-services-compoenents</a></li><li><a href="module-Create-services-pages.html">Create-services-pages</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bind">bind</a></li><li><a href="global.html#buildComponent">buildComponent</a></li><li><a href="global.html#buildStyleNodes">buildStyleNodes</a></li><li><a href="global.html#buildTemplateNodes">buildTemplateNodes</a></li><li><a href="global.html#checkElectron">checkElectron</a></li><li><a href="global.html#generateRandomValue">generateRandomValue</a></li><li><a href="global.html#loadScript">loadScript</a></li><li><a href="global.html#localize">localize</a></li><li><a href="global.html#setAppStyle">setAppStyle</a></li><li><a href="global.html#setComponentNameSpace">setComponentNameSpace</a></li><li><a href="global.html#setConfig">setConfig</a></li><li><a href="global.html#setCurrentApp">setCurrentApp</a></li><li><a href="global.html#setCurrentAppPath">setCurrentAppPath</a></li><li><a href="global.html#setLanguage">setLanguage</a></li><li><a href="global.html#setLocalization">setLocalization</a></li><li><a href="global.html#setRoutes">setRoutes</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
